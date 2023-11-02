@@ -1,5 +1,6 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Hash from "@ioc:Adonis/Core/Hash";
+import { supabase } from "../../../config/supabase_config";
 
 interface User {
   email: string;
@@ -14,37 +15,34 @@ export default class UsersController {
   }
 
   async store({ request, response }) {
-    const { email, password } = request.body();
+    try {
+      const { email, password } = request.body();
 
-    const hashedPassword = await Hash.make(password);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    users.push({ email, password, hashedPassword });
+      console.log("data from supabase: ", data);
+      console.log("error from supabase: ", error);
 
-    response.send({
-      email,
-      password,
-      hashedPassword,
-      users: users,
-    });
+      return { data };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async login({ request }) {
     const { email, password } = request.body();
 
-    const foundUser = users.find((user) => {
-      return user.email === email;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    if (!foundUser) {
-      return {
-        msg: "wrong credentials",
-      };
-    }
+    console.log("data from supabase: ", data);
+    console.log("error from supabase: ", error);
 
-    if (await Hash.verify(foundUser?.hashedPassword, password)) {
-      return { foundUser };
-    }
-
-    return { msg: "wrong credentials" };
+    return { data };
   }
 }
