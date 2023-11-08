@@ -2,19 +2,12 @@
 import Hash from "@ioc:Adonis/Core/Hash";
 import { supabase } from "../../../config/supabase_config";
 
-interface User {
-  email: string;
-  password: string;
-  hashedPassword: string;
-}
-const users: User[] = [];
-
 export default class UsersController {
   async index() {
-    return users;
+    return { msg: "return users route" };
   }
 
-  async store({ request, response }) {
+  async store({ request }) {
     try {
       const { email, password } = request.body();
 
