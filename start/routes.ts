@@ -20,5 +20,8 @@
 
 import Route from "@ioc:Adonis/Core/Route";
 
-Route.resource("users", "UsersController").apiOnly();
-Route.post("users/login", "UsersController.login");
+Route.group(() => {
+  Route.resource("", "UsersController").apiOnly();
+  Route.post("/register", "AuthController.register");
+  Route.post("/login", "UsersController.login");
+}).prefix("/users");
