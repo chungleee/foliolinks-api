@@ -1,5 +1,6 @@
 // import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { supabase } from "../../../config/supabase_config";
+import { ExceptionHandler, ErrorHandler } from "../../Exceptions/Handler";
 
 export default class AuthController {
   async register({ request }) {
@@ -21,20 +22,33 @@ export default class AuthController {
     }
   }
 
-  async login({ request }) {
+  async login(ctx) {
     try {
-      const { email, password } = request.body();
+      const { email, password } = ctx.request.body();
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw Error(error.message);
+      if (error)
+        ErrorHandler(
+          { code: "help", message: "help me pls", status: "409" },
+          ctx
+        );
+      // throw new ExceptionHandler().handle(
+      //   {
+      //     code: "help",
+      //     message: "help me",
+      //     status: "400",
+      //   },
+      //   ctx
+      // );
+      // if (error) throw Error(error.message);
 
       return { data };
     } catch (error) {
-      console.log("error: ", error);
+      console.log("error from route: ", error);
       return { error: error.message };
     }
   }
