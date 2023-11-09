@@ -23,4 +23,5 @@ export default Env.rules({
   NODE_ENV: Env.schema.enum(["development", "production", "test"] as const),
   SUPABASE_URL: Env.schema.string(),
   SUPABASE_KEY: Env.schema.string(),
+  DATABASE_URL: Env.schema.string(),
 });
