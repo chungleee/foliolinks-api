@@ -1,8 +1,14 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import { supabase } from "../../../config/supabase_config";
+import prisma from "../../../prisma/prisma";
 
 export default class UsersController {
-  async index() {
-    return { msg: "return users route" };
+  async store({ request }) {
+    const { username, firstName, lastName } = request.body();
+
+    const newUser = await prisma.user.create({
+      data: { username, firstName, lastName },
+    });
+
+    return { newUser };
   }
 }
