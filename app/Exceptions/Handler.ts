@@ -1,3 +1,4 @@
+import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 /*
 |--------------------------------------------------------------------------
 | Http Exception Handler
@@ -13,11 +14,20 @@
 |
 */
 
-import Logger from '@ioc:Adonis/Core/Logger'
-import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
+import Logger from "@ioc:Adonis/Core/Logger";
+import HttpExceptionHandler from "@ioc:Adonis/Core/HttpExceptionHandler";
 
 export default class ExceptionHandler extends HttpExceptionHandler {
-  constructor () {
-    super(Logger)
+  constructor() {
+    super(Logger);
+  }
+
+  async handle(error, ctx: HttpContextContract) {
+    console.log("error from handler: ", error);
+    if (error.code === "help") {
+      ctx.response.status(error.status).send(error.message);
+    }
   }
 }
+
+export const ErrorHandler = new ExceptionHandler().handle;
