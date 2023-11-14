@@ -23,8 +23,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   }
 
   async handle(error: any, { response }) {
-    // console.log("error in error handler: ", error);
-
+    console.log("ERROR: ", error);
     if (error.name === "ValidationException") {
       return response.status(200).json({ error: error.messages.errors });
     }
