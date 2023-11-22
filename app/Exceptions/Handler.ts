@@ -1,4 +1,4 @@
-// import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 /*
 |--------------------------------------------------------------------------
 | Http Exception Handler
@@ -23,13 +23,23 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   }
 
   async handle(error: any, { response }) {
-    console.log("ERROR: ", error);
+    console.log("ERROR in handler: ", error);
     if (error.name === "ValidationException") {
       return response.status(200).json({ error: error.messages.errors });
     }
 
     if (error.name === "AuthApiError") {
-      return response.status(400).json({ error: error.message });
+      if (error.message.includes("invalid claim")) {
+        return response.status(error.status).json({ error: "Please log in" });
+      }
+
+      if (error.message.includes("invalid JWT")) {
+        return response
+          .status(error.status)
+          .json({ error: "Invalid credentials" });
+      }
+
+      return response.status(error.status).json({ error: error.message });
     }
   }
 }

@@ -11,4 +11,8 @@ export default class UsersController {
 
     return { newUser };
   }
+
+  async index({ request, response }) {
+    return { msg: "this fetches all users" };
+  }
 }

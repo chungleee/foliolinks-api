@@ -1,4 +1,4 @@
-// import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { supabase } from "../../../config/supabase_config";
 import { ErrorHandler } from "../../Exceptions/Handler";
 import { schema, rules } from "@ioc:Adonis/Core/Validator";
