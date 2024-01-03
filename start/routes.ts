@@ -24,7 +24,7 @@ Route.group(() => {
   // Route.resource("", "UsersController").apiOnly();
   Route.resource("", "UserProfileController")
     .middleware({
-      "*": ["supabaseAuth"],
+      // "*": ["supabaseAuth"],
     })
     .apiOnly();
   Route.post("/register", "AuthController.register");
