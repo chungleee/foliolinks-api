@@ -22,7 +22,7 @@ import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
   // Route.resource("", "UsersController").apiOnly();
-  Route.resource("", "UsersController")
+  Route.resource("", "UserProfileController")
     .middleware({
       "*": ["supabaseAuth"],
     })

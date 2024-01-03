@@ -1,7 +1,7 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import prisma from "../../../prisma/prisma";
 
-export default class UsersController {
+export default class UserProfileController {
   async store({ request }) {
     const { username, firstName, lastName } = request.body();
 
@@ -12,7 +12,7 @@ export default class UsersController {
     return { newUser };
   }
 
-  async index({ request, response }) {
+  async index() {
     return { msg: "this fetches all users" };
   }
 }
