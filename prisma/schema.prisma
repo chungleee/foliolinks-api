@@ -12,8 +12,9 @@ datasource db {
 
 model UserProfile {
   id  BigInt @id @default(autoincrement())
-  user_id String @db.String(200)
-  username String? @db.String(200)
-  firstName String? @db.String(200)
-  lastName String? @db.String(200)
+  user_id String @unique @db.String(200)
+  username String @unique @db.String(200) 
+  firstName String @db.String(200)
+  lastName String @db.String(200)
+  email String @unique @default("") @db.String(200)
 }
