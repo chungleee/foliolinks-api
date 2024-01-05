@@ -20,28 +20,16 @@
 
 import Route from "@ioc:Adonis/Core/Route";
 
-// Route.group(() => {
-//   // Route.resource("", "UsersController").apiOnly();
-//   Route.group(() => {
-//     Route.post("/create", "UserProfileController.create");
-//   }).prefix("/profile");
-//   // Route.resource("", "UserProfileController")
-//   //   .middleware({
-//   //     // "*": ["supabaseAuth"],
-//   //   })
-//   //   .apiOnly();
-//   Route.post("/register", "AuthController.register");
-//   Route.post("/login", "AuthController.login");
-// }).prefix("/users");
-
 Route.group(() => {
   Route.group(() => {
     // user profile route
     Route.group(() => {
-      Route.post("/create", "UserProfileController.create");
-    })
-      .prefix("/profile")
-      .middleware("supabaseAuth");
+      Route.group(() => {
+        Route.post("/create", "UserProfileController.create");
+      }).middleware("supabaseAuth");
+
+      Route.get("/:username", "UserProfileController.getUserProfile");
+    }).prefix("/profile");
 
     // user auth routes
     Route.group(() => {
