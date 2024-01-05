@@ -26,6 +26,7 @@ Route.group(() => {
     Route.group(() => {
       Route.group(() => {
         Route.post("/create", "UserProfileController.create");
+        Route.delete("/:username", "UserProfileController.deleteUserProfile");
       }).middleware("supabaseAuth");
 
       Route.get("/:username", "UserProfileController.getUserProfile");

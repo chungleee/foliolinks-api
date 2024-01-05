@@ -37,4 +37,30 @@ export default class UserProfileController {
 
     return { data: userProfile };
   }
+
+  async deleteUserProfile({ request }) {
+    const { username } = request.params();
+
+    const auth_user_id = request.authenticatedUser.id;
+
+    const matchedUser = await prisma.userProfile.findUnique({
+      where: {
+        user_id: auth_user_id,
+      },
+    });
+
+    if (!matchedUser) {
+      throw "Unauthorized";
+    }
+
+    const deletedUserProfile = await prisma.userProfile.delete({
+      where: {
+        username,
+      },
+    });
+
+    if (!deletedUserProfile) throw "ProfileDeletionError";
+
+    return { data: deletedUserProfile };
+  }
 }
