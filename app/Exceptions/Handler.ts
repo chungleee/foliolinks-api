@@ -16,6 +16,7 @@ import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
 import Logger from "@ioc:Adonis/Core/Logger";
 import HttpExceptionHandler from "@ioc:Adonis/Core/HttpExceptionHandler";
+import { Prisma } from "@prisma/client";
 
 export default class ExceptionHandler extends HttpExceptionHandler {
   constructor() {
@@ -23,7 +24,8 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   }
 
   async handle(error: any, { response }) {
-    console.log("ERROR in handler: ", error);
+    console.log("ERROR: ", error);
+
     if (error.name === "ValidationException") {
       return response.status(200).json({ error: error.messages.errors });
     }
@@ -50,6 +52,14 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       return response.status(400).json({
         error: "Cannot find user profile",
       });
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return response.status(400).json({
+          error: "User profile already exists",
+        });
+      }
     }
   }
 }

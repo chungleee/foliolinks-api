@@ -1,13 +1,34 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import prisma from "../../../prisma/prisma";
+import { schema, rules, validator } from "@ioc:Adonis/Core/Validator";
+
+const CreateUserProfileSchema = schema.create({
+  username: schema.string(),
+  firstName: schema.string(),
+  lastName: schema.string(),
+});
 
 export default class UserProfileController {
   async create({ request }) {
-    const user = request.authenticatedUser;
+    const { id, email } = request.authenticatedUser;
     const { username, firstName, lastName } = request.body();
 
+    await validator.validate({
+      schema: schema.create({
+        id: schema.string(),
+        email: schema.string([rules.email(), rules.trim()]),
+      }),
+      data: {
+        id,
+        email,
+      },
+    });
+
+    await request.validate({ schema: CreateUserProfileSchema });
+
     const data = {
-      user_id: user.id,
+      user_id: id,
+      email,
       username,
       firstName,
       lastName,
