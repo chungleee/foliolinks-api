@@ -44,13 +44,18 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       return response.status(error.status).json({ error: error.message });
     }
 
-    if (error === "Unauthorized") {
+    if (error.message === "Unauthorized") {
       return response.status(403).json({ error: "Invalid credentials" });
     }
 
-    if (error === "ProfileDeletionError") {
+    if (error.message === "ProfileDeletionError") {
       return response.status(400).json({
         error: "Cannot find user profile",
+      });
+    }
+    if (error.message === "ProfileDoesNotExist") {
+      return response.status(404).json({
+        error: "User profile does not exist",
       });
     }
 

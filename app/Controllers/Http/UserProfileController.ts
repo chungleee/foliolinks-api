@@ -56,6 +56,10 @@ export default class UserProfileController {
       },
     });
 
+    if (!userProfile) {
+      throw new Error("ProfileDoesNotExist");
+    }
+
     return { data: userProfile };
   }
 
@@ -71,7 +75,7 @@ export default class UserProfileController {
     });
 
     if (!matchedUser) {
-      throw "Unauthorized";
+      throw new Error("Unauthorized");
     }
 
     const deletedUserProfile = await prisma.userProfile.delete({
@@ -80,7 +84,7 @@ export default class UserProfileController {
       },
     });
 
-    if (!deletedUserProfile) throw "ProfileDeletionError";
+    if (!deletedUserProfile) throw new Error("ProfileDeletionError");
 
     return { data: deletedUserProfile };
   }
