@@ -44,6 +44,15 @@ export default class UserProfileController {
   async getUserProfile({ request }) {
     const { username } = request.params();
 
+    await validator.validate({
+      schema: schema.create({
+        username: schema.string(),
+      }),
+      data: {
+        username,
+      },
+    });
+
     const userProfile = await prisma.userProfile.findUnique({
       where: {
         username,
@@ -65,26 +74,30 @@ export default class UserProfileController {
 
   async deleteUserProfile({ request }) {
     const { username } = request.params();
-
     const auth_user_id = request.authenticatedUser.id;
 
-    const matchedUser = await prisma.userProfile.findUnique({
+    await validator.validate({
+      schema: schema.create({
+        username: schema.string(),
+        auth_user_id: schema.string(),
+      }),
+      data: {
+        username,
+        auth_user_id,
+      },
+    });
+
+    await prisma.userProfile.findUnique({
       where: {
         user_id: auth_user_id,
       },
     });
-
-    if (!matchedUser) {
-      throw new Error("Unauthorized");
-    }
 
     const deletedUserProfile = await prisma.userProfile.delete({
       where: {
         username,
       },
     });
-
-    if (!deletedUserProfile) throw new Error("ProfileDeletionError");
 
     return { data: deletedUserProfile };
   }
