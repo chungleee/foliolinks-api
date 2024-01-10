@@ -65,10 +65,6 @@ export default class UserProfileController {
       },
     });
 
-    if (!userProfile) {
-      throw new Error("ProfileDoesNotExist");
-    }
-
     return { data: userProfile };
   }
 
