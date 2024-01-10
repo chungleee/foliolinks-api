@@ -21,12 +21,21 @@
 import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
-  // Route.resource("", "UsersController").apiOnly();
-  Route.resource("", "UserProfileController")
-    .middleware({
-      "*": ["supabaseAuth"],
-    })
-    .apiOnly();
-  Route.post("/register", "AuthController.register");
-  Route.post("/login", "AuthController.login");
-}).prefix("/users");
+  Route.group(() => {
+    // user profile route
+    Route.group(() => {
+      Route.group(() => {
+        Route.post("/create", "UserProfileController.create");
+        Route.delete("/:username", "UserProfileController.deleteUserProfile");
+      }).middleware("supabaseAuth");
+
+      Route.get("/:username", "UserProfileController.getUserProfile");
+    }).prefix("/profile");
+
+    // user auth routes
+    Route.group(() => {
+      Route.post("/register", "AuthController.register");
+      Route.post("/login", "AuthController.login");
+    }).prefix("/auth");
+  }).prefix("/users");
+}).prefix("/api");

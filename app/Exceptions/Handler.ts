@@ -16,6 +16,7 @@ import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
 import Logger from "@ioc:Adonis/Core/Logger";
 import HttpExceptionHandler from "@ioc:Adonis/Core/HttpExceptionHandler";
+import { Prisma } from "@prisma/client";
 
 export default class ExceptionHandler extends HttpExceptionHandler {
   constructor() {
@@ -23,7 +24,8 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   }
 
   async handle(error: any, { response }) {
-    console.log("ERROR in handler: ", error);
+    console.log("ERROR: ", error);
+
     if (error.name === "ValidationException") {
       return response.status(200).json({ error: error.messages.errors });
     }
@@ -40,6 +42,36 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       }
 
       return response.status(error.status).json({ error: error.message });
+    }
+
+    if (error.message === "Unauthorized") {
+      return response.status(403).json({ error: "Invalid credentials" });
+    }
+
+    if (error.message === "ProfileDeletionError") {
+      return response.status(400).json({
+        error: "Cannot find user profile",
+      });
+    }
+    if (error.message === "ProfileDoesNotExist") {
+      return response.status(404).json({
+        error: "User profile does not exist",
+      });
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      switch (error.code) {
+        case "P2002":
+          return response.status(400).json({
+            error: "User profile already exist",
+          });
+        case "P2025":
+          return response.status(404).json({
+            error: "User profile does not exist",
+          });
+        default:
+          return response.status(500).json({ error: "Internal server error" });
+      }
     }
   }
 }
