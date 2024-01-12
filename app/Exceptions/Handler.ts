@@ -23,7 +23,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     super(Logger);
   }
 
-  async handle(error: any, { response }) {
+  async handle(error: any, { response }: HttpContextContract) {
     console.log("ERROR: ", error);
 
     if (error.name === "ValidationException") {
@@ -60,11 +60,11 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     }
 
     // MEMBERSHIP ERRORS
-    if (error.message === "FreeTierLimit") {
-      return response.status(200).json({
-        error: "You have exceeded the number of projects allowed",
-      });
-    }
+    // if (error.message === "FreeTierLimit") {
+    //   return response.status(200).json({
+    //     error: "You have exceeded the number of projects allowed",
+    //   });
+    // }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // PRISMA ERRORS
@@ -82,7 +82,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
           return response.status(500).json({ error: "Internal server error" });
       }
     }
+
+    return super.handle(error, { response } as HttpContextContract);
   }
 }
-
-export const ErrorHandler = new ExceptionHandler().handle;
