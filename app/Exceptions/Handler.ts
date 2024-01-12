@@ -59,7 +59,16 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       });
     }
 
+    // MEMBERSHIP ERRORS
+    if (error.message === "FreeTierLimit") {
+      return response.status(200).json({
+        error: "You have exceeded the number of projects allowed",
+      });
+    }
+
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // PRISMA ERRORS
+
       switch (error.code) {
         case "P2002":
           return response.status(400).json({
