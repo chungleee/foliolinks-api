@@ -1,11 +1,24 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import prisma from "../../../prisma/prisma";
 import ExceedingLimit from "../../Exceptions/ExceedingLimitException";
+import { schema } from "@ioc:Adonis/Core/Validator";
 
 export default class ProjectsController {
   async createProjects({ request }) {
     const { projects } = request.body();
     const user_id = request.authenticatedUser.id;
+
+    const newProjectsSchema = schema.create({
+      projects: schema.array().members(
+        schema.object().members({
+          project_name: schema.string(),
+          project_description: schema.string(),
+          project_url: schema.string(),
+        })
+      ),
+    });
+
+    await request.validate({ schema: newProjectsSchema });
 
     // fetch number projects by user_id
     const userProjectsCount = await prisma.project.count({
