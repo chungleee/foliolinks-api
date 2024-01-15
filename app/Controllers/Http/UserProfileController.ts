@@ -38,7 +38,7 @@ export default class UserProfileController {
       data,
     });
 
-    return { msg: "/users/profile/create", newUserProfile };
+    return { data: newUserProfile };
   }
 
   async getUserProfile({ request }) {
