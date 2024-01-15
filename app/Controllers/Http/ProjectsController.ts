@@ -1,12 +1,28 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import prisma from "../../../prisma/prisma";
-import ExceedingLimit from "../../Exceptions/ExceedingLimitException";
+import ProjectException from "../../Exceptions/ProjectException";
 import { schema } from "@ioc:Adonis/Core/Validator";
 
 export default class ProjectsController {
   async createProjects({ request }) {
     const { projects } = request.body();
     const user_id = request.authenticatedUser.id;
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id,
+      },
+    });
+
+    console.log("user profile: ", userProfile);
+
+    if (!userProfile) {
+      const message = "User profile has not been created yet";
+      const status = 404;
+      const errorCode = "UserProfileNotFound";
+
+      throw new ProjectException(message, status, errorCode);
+    }
 
     // projects object input validation schema
     const newProjectsSchema = schema.create({
@@ -38,7 +54,7 @@ export default class ProjectsController {
       const errorCode = "FreeTierLimit";
 
       // throw new Error(errorCode);
-      throw new ExceedingLimit(message, status, errorCode);
+      throw new ProjectException(message, status, errorCode);
     }
 
     const data = projects.map((project) => {
@@ -53,5 +69,19 @@ export default class ProjectsController {
     });
 
     return { projects: createdProjects, userProjectsCount };
+  }
+
+  async getOwnProjects({ request }) {
+    const user_id = request.authenticatedUser.id;
+
+    const ownProjects = await prisma.project.findMany({
+      where: {
+        user_id,
+      },
+    });
+
+    return {
+      projects: ownProjects,
+    };
   }
 }
