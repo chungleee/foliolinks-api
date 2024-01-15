@@ -38,8 +38,9 @@ Route.group(() => {
   }).prefix("/auth");
 
   Route.group(() => {
-    Route.post("/projects", "ProjectsController.createProjects").middleware(
-      "supabaseAuth"
-    );
+    Route.group(() => {
+      Route.get("/projects", "ProjectsController.getOwnProjects");
+      Route.post("/projects", "ProjectsController.createProjects");
+    }).middleware("supabaseAuth");
   });
 }).prefix("/api/users");
