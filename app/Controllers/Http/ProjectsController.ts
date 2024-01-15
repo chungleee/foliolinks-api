@@ -8,6 +8,7 @@ export default class ProjectsController {
     const { projects } = request.body();
     const user_id = request.authenticatedUser.id;
 
+    // projects object input validation schema
     const newProjectsSchema = schema.create({
       projects: schema.array().members(
         schema.object().members({
@@ -26,11 +27,11 @@ export default class ProjectsController {
         user_id,
       },
     });
+
     // if more than 2, do not allow
-
     const freeTierLimit = 2;
-    // const limitRemainder = freeTierLimit - userProjectsCount
 
+    // const limitRemainder = freeTierLimit - userProjectsCount
     if (userProjectsCount >= freeTierLimit) {
       const message = "You have exceeded the number of projects allowed";
       const status = 403;
