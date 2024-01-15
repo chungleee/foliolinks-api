@@ -8,25 +8,6 @@ export default class ProjectsController {
     const { projects } = request.body();
     const user_id = request.authenticatedUser.id;
 
-    const userProfile = await prisma.userProfile.findUnique({
-      where: {
-        user_id,
-      },
-      include: {
-        projects: true,
-      },
-    });
-
-    console.log("userProfile: ", userProfile);
-
-    if (!userProfile) {
-      const message = "User profile must be created first";
-      const status = 404;
-      const errorCode = "UserProfileNotFound";
-
-      throw new ProjectException(message, status, errorCode);
-    }
-
     // projects object input validation schema
     const newProjectsSchema = schema.create({
       projects: schema.array().members(
@@ -38,14 +19,24 @@ export default class ProjectsController {
       ),
     });
 
-    await request.validate({ schema: newProjectsSchema });
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id,
+      },
+      include: {
+        projects: true,
+      },
+    });
 
-    // fetch number projects by user_id
-    // const userProjectsCount = await prisma.project.count({
-    //   where: {
-    //     user_id,
-    //   },
-    // });
+    if (!userProfile) {
+      const message = "User profile must be created first";
+      const status = 404;
+      const errorCode = "UserProfileNotFound";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    await request.validate({ schema: newProjectsSchema });
 
     // if more than 2, do not allow
     const userProjectsCount = userProfile.projects.length;
