@@ -12,12 +12,15 @@ export default class ProjectsController {
       where: {
         user_id,
       },
+      include: {
+        projects: true,
+      },
     });
 
-    console.log("user profile: ", userProfile);
+    console.log("userProfile: ", userProfile);
 
     if (!userProfile) {
-      const message = "User profile has not been created yet";
+      const message = "User profile must be created first";
       const status = 404;
       const errorCode = "UserProfileNotFound";
 
@@ -38,13 +41,14 @@ export default class ProjectsController {
     await request.validate({ schema: newProjectsSchema });
 
     // fetch number projects by user_id
-    const userProjectsCount = await prisma.project.count({
-      where: {
-        user_id,
-      },
-    });
+    // const userProjectsCount = await prisma.project.count({
+    //   where: {
+    //     user_id,
+    //   },
+    // });
 
     // if more than 2, do not allow
+    const userProjectsCount = userProfile.projects.length;
     const freeTierLimit = 2;
 
     // const limitRemainder = freeTierLimit - userProjectsCount
@@ -53,13 +57,13 @@ export default class ProjectsController {
       const status = 403;
       const errorCode = "FreeTierLimit";
 
-      // throw new Error(errorCode);
       throw new ProjectException(message, status, errorCode);
     }
 
     const data = projects.map((project) => {
       return {
         user_id,
+        username: userProfile.username,
         ...project,
       };
     });
@@ -68,7 +72,10 @@ export default class ProjectsController {
       data,
     });
 
-    return { projects: createdProjects, userProjectsCount };
+    return {
+      projects: createdProjects,
+      userProfile,
+    };
   }
 
   async getOwnProjects({ request }) {
