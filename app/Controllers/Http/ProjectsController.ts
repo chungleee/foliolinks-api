@@ -65,7 +65,6 @@ export default class ProjectsController {
 
     return {
       projects: createdProjects,
-      userProfile,
     };
   }
 
@@ -83,7 +82,39 @@ export default class ProjectsController {
     };
   }
 
-  async deleteSelectedProjects({ request }) {
+  async updateProjectById({ request }) {
+    const user_id = request.authenticatedUser.id;
+    const { id, ...updateProject } = request.body().updateProject;
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id,
+      },
+    });
+
+    if (!userProfile) {
+      const message = "User profile must be created first";
+      const status = 404;
+      const errorCode = "UserProfileNotFound";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    const updatedProject = await prisma.project.update({
+      where: {
+        id,
+        user_id,
+      },
+      data: updateProject,
+    });
+
+    return {
+      userProfile,
+      updatedProject,
+    };
+  }
+
+  async deleteProjectByIds({ request }) {
     const user_id = request.authenticatedUser.id;
     const { projectsToDelete } = request.body();
 
