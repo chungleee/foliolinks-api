@@ -87,6 +87,14 @@ export default class ProjectsController {
     const user_id = request.authenticatedUser.id;
     const { projectsToDelete } = request.body();
 
+    if (!projectsToDelete.length) {
+      const message = "Please select projects to delete";
+      const status = 400;
+      const errorCode = "ProjectSelectionError";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
     const matchedUser = await prisma.userProfile.findUnique({
       where: {
         user_id,
@@ -117,6 +125,6 @@ export default class ProjectsController {
       throw new ProjectException(message, status, errorCode);
     }
 
-    return { projectsToDelete, deletedProjects };
+    return { deletedProjects };
   }
 }
