@@ -13,5 +13,5 @@ As a **registered user**, I can:
   - [x] Input validation
 - [x] Read list of own projects (by id)
 - [] Read user page (by username)
-- [] Update a project
+- [x] Update a project
 - [x] Delete a/many project(s)
