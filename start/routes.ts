@@ -41,7 +41,8 @@ Route.group(() => {
     Route.group(() => {
       Route.get("/projects", "ProjectsController.getOwnProjects");
       Route.post("/projects", "ProjectsController.createProjects");
-      Route.delete("/projects", "ProjectsController.deleteSelectedProjects");
+      Route.delete("/projects", "ProjectsController.deleteProjectByIds");
+      Route.patch("/projects", "ProjectsController.updateProjectById");
     }).middleware("supabaseAuth");
   });
 }).prefix("/api/users");
