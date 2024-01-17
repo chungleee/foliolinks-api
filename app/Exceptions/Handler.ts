@@ -76,7 +76,8 @@ export default class ExceptionHandler extends HttpExceptionHandler {
           });
         case "P2025":
           return response.status(404).json({
-            error: "User profile does not exist",
+            error: error.meta,
+            // error: "User profile does not exist",
           });
         default:
           return response.status(500).json({ error: "Internal server error" });
