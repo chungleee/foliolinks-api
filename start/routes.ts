@@ -38,11 +38,18 @@ Route.group(() => {
   }).prefix("/auth");
 
   Route.group(() => {
-    Route.group(() => {
-      Route.get("/projects", "ProjectsController.getOwnProjects");
-      Route.post("/projects", "ProjectsController.createProjects");
-      Route.delete("/projects", "ProjectsController.deleteProjectByIds");
-      Route.patch("/projects", "ProjectsController.updateProjectById");
-    }).middleware("supabaseAuth");
-  });
+    Route.get("/", "ProjectsController.getOwnProjects");
+    Route.post("/", "ProjectsController.createProjects");
+    Route.delete("/", "ProjectsController.deleteProjectByIds");
+    Route.patch("/", "ProjectsController.updateProjectById");
+  })
+    .middleware("supabaseAuth")
+    .prefix("/projects");
 }).prefix("/api/users");
+
+// /api/users/auth/register
+// /api/users/auth/login
+
+// /api/users/projects -> CRUD
+
+// /api/users/profile/
