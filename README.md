@@ -12,6 +12,6 @@ As a **registered user**, I can:
   - [x] Return error if exceeds limit tier
   - [x] Input validation
 - [x] Read list of own projects (by id)
-- [] Read user page (by username)
+- [x] Read user skeleton page (by username) (setup ssr with inertiajs)
 - [x] Update a project
 - [x] Delete a/many project(s)
