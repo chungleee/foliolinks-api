@@ -23,7 +23,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     super(Logger);
   }
 
-  async handle(error: any, { response }) {
+  async handle(error: any, { response }: HttpContextContract) {
     console.log("ERROR: ", error);
 
     if (error.name === "ValidationException") {
@@ -59,7 +59,16 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       });
     }
 
+    // MEMBERSHIP ERRORS
+    // if (error.message === "FreeTierLimit") {
+    //   return response.status(200).json({
+    //     error: "You have exceeded the number of projects allowed",
+    //   });
+    // }
+
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // PRISMA ERRORS
+
       switch (error.code) {
         case "P2002":
           return response.status(400).json({
@@ -67,13 +76,14 @@ export default class ExceptionHandler extends HttpExceptionHandler {
           });
         case "P2025":
           return response.status(404).json({
-            error: "User profile does not exist",
+            error: error.meta,
+            // error: "User profile does not exist",
           });
         default:
           return response.status(500).json({ error: "Internal server error" });
       }
     }
+
+    return super.handle(error, { response } as HttpContextContract);
   }
 }
-
-export const ErrorHandler = new ExceptionHandler().handle;

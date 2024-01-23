@@ -24,4 +24,5 @@ export default Env.rules({
   SUPABASE_URL: Env.schema.string(),
   SUPABASE_KEY: Env.schema.string(),
   DATABASE_URL: Env.schema.string(),
+  SESSION_DRIVER: Env.schema.string(),
 });

@@ -12,9 +12,22 @@ datasource db {
 
 model UserProfile {
   id  BigInt @id @default(autoincrement())
-  user_id String @unique @db.String(200)
-  username String @unique @db.String(200) 
-  firstName String @db.String(200)
-  lastName String @db.String(200)
-  email String @unique @default("") @db.String(200)
+  user_id String @unique 
+  username String @unique  
+  firstName String 
+  lastName String 
+  email String @unique @default("") 
+  projects Project[]
+
+  @@unique([user_id, username])
+}
+
+model Project {
+  id  BigInt  @id @default(autoincrement())
+  user_id String
+  username String
+  project_owner UserProfile @relation(fields: [user_id, username], references: [user_id, username])
+  project_name  String
+  project_description  String
+  project_url  String
 }
