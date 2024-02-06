@@ -1,6 +1,5 @@
-import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+// import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { supabase } from "../../../config/supabase_config";
-import { ErrorHandler } from "../../Exceptions/Handler";
 import { schema, rules } from "@ioc:Adonis/Core/Validator";
 
 const newRegisterSchema = schema.create({
@@ -15,38 +14,32 @@ const loginSchema = schema.create({
 
 export default class AuthController {
   async register({ request, response }) {
-    try {
-      const { email, password } = request.body();
-      await request.validate({ schema: newRegisterSchema });
+    const { email, password } = request.body();
+    await request.validate({ schema: newRegisterSchema });
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-      if (error) throw error;
+    if (error) response.send(error);
 
-      return { data };
-    } catch (error) {
-      throw ErrorHandler(error, { response });
-    }
+    return { data };
   }
 
   async login({ request, response }) {
-    try {
-      const { email, password } = request.body();
-      await request.validate({ schema: loginSchema });
+    const { email, password } = request.body();
+    await request.validate({ schema: loginSchema });
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (error) throw error;
-
-      return { data };
-    } catch (error) {
-      throw ErrorHandler(error, { response });
+    if (error) {
+      response.send(error);
     }
+
+    return { data };
   }
 }
