@@ -40,6 +40,8 @@ export default class AuthController {
       response.send(error);
     }
 
-    return { data };
+    const { session } = data;
+    response.cookie("foliolinks_auth", session);
+    // return { data };
   }
 }
