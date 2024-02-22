@@ -47,10 +47,6 @@ Route.group(() => {
     .prefix("/projects");
 }).prefix("/api/users");
 
-Route.get("/testIndexPage", async ({ inertia }) => {
-  return inertia.render("Index", { title: "pls work" });
-});
-
 // /api/users/auth/register
 // /api/users/auth/login
 
