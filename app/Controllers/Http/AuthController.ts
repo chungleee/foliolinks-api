@@ -24,7 +24,10 @@ export default class AuthController {
 
     if (error) response.send(error);
 
-    return { data };
+    const { session } = data;
+    response.cookie("foliolinks_auth", session);
+
+    // return { data };
   }
 
   async login({ request, response }) {
