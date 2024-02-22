@@ -6,12 +6,12 @@ export default class SupabaseAuth {
     { request }: HttpContextContract,
     next: () => Promise<void>
   ) {
-    const jwt = request.headers().authorization;
+    const foliolinks_auth = request.cookie("foliolinks_auth");
 
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(jwt);
+    } = await supabase.auth.getUser(foliolinks_auth.access_token);
 
     if (error) {
       throw error;
