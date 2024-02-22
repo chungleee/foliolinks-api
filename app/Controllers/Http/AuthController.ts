@@ -26,8 +26,6 @@ export default class AuthController {
 
     const { session } = data;
     response.cookie("foliolinks_auth", session);
-
-    // return { data };
   }
 
   async login({ request, response }) {
@@ -45,6 +43,5 @@ export default class AuthController {
 
     const { session } = data;
     response.cookie("foliolinks_auth", session);
-    // return { data };
   }
 }
