@@ -49,6 +49,9 @@ Route.group(() => {
 
 Route.get("/ping", async () => {
   return { ping: "pinged" };
+}).middleware(({ request }, next) => {
+  console.log("cookie: ", request.cookie("foliolinks_auth"));
+  next();
 });
 
 // /api/users/auth/register
