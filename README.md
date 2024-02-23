@@ -10,8 +10,14 @@ https://github.com/chungleee/portfolio-links
 
 ### Projects API
 
+As a **user**, I can:
+
+- [x] Create an account
+- [x] View a user profile/portfolio
+
 As a **registered user**, I can:
 
+- [x] Log into account
 - [x] Create a project:
   - [x] Accept array of project objects to insert to db where user_id
   - [x] Add :username as foreign key to Projects
