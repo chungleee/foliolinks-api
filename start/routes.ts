@@ -47,6 +47,10 @@ Route.group(() => {
     .prefix("/projects");
 }).prefix("/api/users");
 
+Route.get("/ping", async () => {
+  return { ping: "pinged" };
+});
+
 // /api/users/auth/register
 // /api/users/auth/login
 
