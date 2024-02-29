@@ -41,7 +41,13 @@ export default class AuthController {
       response.send(error);
     }
 
-    const { session } = data;
+    const { session, user } = data;
+    const userData = {
+      id: user?.id,
+      email: user?.email,
+      role: user?.role,
+    };
     response.cookie("foliolinks_auth", session);
+    return { user: userData };
   }
 }
