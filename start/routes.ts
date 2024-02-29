@@ -49,7 +49,7 @@ Route.group(() => {
 
 Route.get("/ping", async () => {
   return { ping: "pinged" };
-}).middleware("supabaseAuth");
+});
 // .middleware(({ request }, next) => {
 //   console.log("cookie: ", request.cookie("foliolinks_auth"));
 
