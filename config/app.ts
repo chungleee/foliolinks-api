@@ -105,7 +105,7 @@ export const http: ServerConfig = {
     domain: "",
     path: "/",
     maxAge: "2h",
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: "none",
   },
