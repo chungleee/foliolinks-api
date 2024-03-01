@@ -47,6 +47,7 @@ const corsConfig: CorsConfig = {
   origin: [
     "https://foliolinks.netlify.app/",
     "http://localhost:3000",
+    "https://localhost:3000",
     "localhost:3000",
   ],
 
