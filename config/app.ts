@@ -106,8 +106,8 @@ export const http: ServerConfig = {
     path: "/",
     maxAge: "2h",
     httpOnly: false,
-    secure: false,
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
   },
 
   /*
