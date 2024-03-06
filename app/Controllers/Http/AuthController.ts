@@ -47,11 +47,7 @@ export default class AuthController {
       email: user?.email,
       role: user?.role,
     };
-    response.cookie("foliolinks_auth", session, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
+    response.cookie("foliolinks_auth", session);
     return { user: userData };
   }
 }
