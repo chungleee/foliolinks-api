@@ -44,13 +44,8 @@ const corsConfig: CorsConfig = {
   |                     one of the above values.
   |
   */
-  origin: "*",
-  // origin: [
-  //   "https://foliolinks.leonchung.ca",
-  //   "http://localhost:3000",
-  //   "https://localhost:3000",
-  //   "localhost:3000",
-  // ],
+
+  origin: ["https://foliolinks.leonchung.ca", "https://localhost:5173"],
 
   /*
   |--------------------------------------------------------------------------
