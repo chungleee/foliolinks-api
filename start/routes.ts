@@ -35,6 +35,7 @@ Route.group(() => {
   Route.group(() => {
     Route.post("/register", "AuthController.register");
     Route.post("/login", "AuthController.login");
+    Route.post("/refresh", "AuthController.refresh");
   }).prefix("/auth");
 
   Route.group(() => {
