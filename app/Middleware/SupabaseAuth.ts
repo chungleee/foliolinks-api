@@ -6,12 +6,18 @@ export default class SupabaseAuth {
     { request }: HttpContextContract,
     next: () => Promise<void>
   ) {
-    const foliolinks_auth = request.cookie("foliolinks_auth");
+    const bearerToken = request.header("authorization");
+
+    if (!bearerToken?.startsWith("Bearer ")) {
+      throw new Error("Unauthorized");
+    }
+
+    const access_token = bearerToken?.split(" ")[1];
 
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(foliolinks_auth.access_token);
+    } = await supabase.auth.getUser(access_token);
 
     if (error) {
       throw error;
