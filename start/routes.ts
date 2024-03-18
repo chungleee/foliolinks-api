@@ -35,6 +35,7 @@ Route.group(() => {
   Route.group(() => {
     Route.post("/register", "AuthController.register");
     Route.post("/login", "AuthController.login");
+    Route.post("/refresh", "AuthController.refresh");
   }).prefix("/auth");
 
   Route.group(() => {
@@ -50,11 +51,6 @@ Route.group(() => {
 Route.get("/ping", async () => {
   return { ping: "pinged" };
 });
-// .middleware(({ request }, next) => {
-//   console.log("cookie: ", request.cookie("foliolinks_auth"));
-
-//   next();
-// });
 
 // /api/users/auth/register
 // /api/users/auth/login
