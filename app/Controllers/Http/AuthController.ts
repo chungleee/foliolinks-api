@@ -76,4 +76,20 @@ export default class AuthController {
     response.cookie("foliolinks_auth_refresh_token", new_refresh_token);
     return { access_token };
   }
+
+  async whoisthis({ request, response }) {
+    const bearerToken = request.header("authorization");
+
+    if (!bearerToken?.startsWith("Bearer ")) {
+      throw new Error("Unauthorized");
+    }
+
+    const access_token = bearerToken?.split(" ")[1];
+
+    const { error } = await supabase.auth.getUser(access_token);
+
+    if (error) {
+      return { error };
+    }
+  }
 }
