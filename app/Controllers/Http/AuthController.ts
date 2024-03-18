@@ -55,4 +55,25 @@ export default class AuthController {
     response.cookie("foliolinks_auth_refresh_token", refresh_token);
     return { user: userData, access_token };
   }
+
+  async refresh({ request, response }) {
+    const refresh_token = request.cookie("foliolinks_auth_refresh_token");
+
+    const { data, error } = await supabase.auth.refreshSession({
+      refresh_token,
+    });
+
+    if (error) {
+      response.send(error);
+    }
+
+    const { session } = data;
+    console.log("new session: ", session);
+
+    const access_token = session?.access_token;
+    const new_refresh_token = session?.refresh_token;
+
+    response.cookie("foliolinks_auth_refresh_token", new_refresh_token);
+    return { access_token };
+  }
 }
