@@ -45,7 +45,7 @@ const corsConfig: CorsConfig = {
   |
   */
 
-  origin: ["https://foliolinks.leonchung.ca", "https://localhost:5173"],
+  origin: ["https://foliolinks.leonchung.ca"],
 
   /*
   |--------------------------------------------------------------------------
