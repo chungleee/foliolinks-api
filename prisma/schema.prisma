@@ -28,6 +28,6 @@ model Project {
   username String
   project_owner UserProfile @relation(fields: [user_id, username], references: [user_id, username])
   project_name  String
-  project_description  String
+  project_description  String?
   project_url  String
 }
