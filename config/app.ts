@@ -102,7 +102,7 @@ export const http: ServerConfig = {
   |--------------------------------------------------------------------------
   */
   cookie: {
-    domain: "",
+    domain: ".leonchung.ca",
     path: "/",
     maxAge: "2h",
     httpOnly: true,
