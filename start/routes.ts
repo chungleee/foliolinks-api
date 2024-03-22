@@ -21,7 +21,13 @@
 import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
-  // user profile route
+  /**
+   * USER PROFILE CONTROLLER
+   * ROUTE /api/users/profile/
+   * PRIVATE POST /create
+   * PRIVATE DELETE /:username
+   * PUBLIC GET /:username
+   */
   Route.group(() => {
     Route.group(() => {
       Route.post("/create", "UserProfileController.create");
@@ -31,13 +37,29 @@ Route.group(() => {
     Route.get("/:username", "UserProfileController.getUserProfile");
   }).prefix("/profile");
 
-  // user auth routes
+  // ******************************************************************
+  /**
+   * AUTH CONTROLLER
+   * ROUTE /api/users/auth/register
+   * PRIVATE POST /register
+   * PRIVATE POST /login
+   * PRIVATE POST /refresh
+   */
   Route.group(() => {
     Route.post("/register", "AuthController.register");
     Route.post("/login", "AuthController.login");
     Route.post("/refresh", "AuthController.refresh");
-    Route.post("/whoisthis", "AuthController.whoisthis");
   }).prefix("/auth");
+
+  // ******************************************************************
+  /**
+   * PROJECTS CONTROLLER
+   * ROUTE /api/users/projects
+   * PRIVATE GET /
+   * PRIVATE POST /
+   * PRIVATE DELETE /
+   * PRIVATE PATCH /
+   */
 
   Route.group(() => {
     Route.get("/", "ProjectsController.getOwnProjects");
@@ -52,10 +74,3 @@ Route.group(() => {
 Route.get("/ping", async () => {
   return { ping: "pinged" };
 });
-
-// /api/users/auth/register
-// /api/users/auth/login
-
-// /api/users/projects -> CRUD
-
-// /api/users/profile/
