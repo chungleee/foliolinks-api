@@ -13,7 +13,7 @@ export default class ProjectsController {
       projects: schema.array().members(
         schema.object().members({
           project_name: schema.string(),
-          project_description: schema.string(),
+          project_description: schema.string.optional(),
           project_url: schema.string(),
         })
       ),
