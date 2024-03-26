@@ -29,28 +29,10 @@ export default class AuthController {
     const access_token = session?.access_token;
     const refresh_token = session?.refresh_token;
 
-    const userProfile = await prisma.userProfile.findUnique({
-      where: {
-        user_id: user?.id,
-      },
-      include: {
-        projects: {
-          select: {
-            id: true,
-            username: true,
-            project_name: true,
-            project_description: true,
-            project_url: true,
-          },
-        },
-      },
-    });
-
     const userData = {
       id: user?.id,
       email: user?.email,
       role: user?.role,
-      userProfile,
     };
 
     response.cookie("foliolinks_auth_refresh_token", refresh_token);
