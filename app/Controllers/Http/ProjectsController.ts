@@ -39,8 +39,11 @@ export default class ProjectsController {
     await request.validate({ schema: newProjectsSchema });
 
     // if more than 2, do not allow
+    let freeTierLimit;
     const userProjectsCount = userProfile.projects.length;
-    const freeTierLimit = 2;
+
+    if (userProfile.membership === "BASIC") freeTierLimit = 1;
+    if (userProfile.membership === "PRO") freeTierLimit = 3;
 
     // const limitRemainder = freeTierLimit - userProjectsCount
     if (userProjectsCount >= freeTierLimit) {
