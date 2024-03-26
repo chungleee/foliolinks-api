@@ -18,6 +18,7 @@ model UserProfile {
   lastName String 
   email String @unique @default("") 
   projects Project[]
+  membership MembershipTier @default(BASIC)
 
   @@unique([user_id, username])
 }
@@ -30,4 +31,9 @@ model Project {
   project_name  String
   project_description  String?
   project_url  String
+}
+
+enum MembershipTier {
+  BASIC
+  PRO
 }
