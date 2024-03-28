@@ -102,7 +102,8 @@ export const http: ServerConfig = {
   |--------------------------------------------------------------------------
   */
   cookie: {
-    domain: ".leonchung.ca",
+    domain: Env.get("NODE_ENV") === "production" ? ".leonchung.ca" : "",
+    // domain: ".leonchung.ca",
     path: "/",
     maxAge: "2h",
     httpOnly: true,
