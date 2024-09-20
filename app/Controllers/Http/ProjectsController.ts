@@ -78,6 +78,12 @@ export default class ProjectsController {
       where: {
         user_id,
       },
+      select: {
+        id: true,
+        project_name: true,
+        project_url: true,
+        username: true,
+      },
     });
 
     return {
