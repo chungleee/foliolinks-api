@@ -122,6 +122,53 @@ export default class ProjectsController {
     };
   }
 
+  async deleteById({ request }) {
+    const user_id = request.authenticatedUser.id;
+    const { projectId } = request.params();
+    const { project } = request.body();
+
+    if (!project) {
+      const message = "Please select projects to delete";
+      const status = 400;
+      const errorCode = "ProjectSelectionError";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    const matchedUser = await prisma.userProfile.findUnique({
+      where: {
+        user_id,
+      },
+    });
+
+    if (!matchedUser) {
+      const message = "Invalid credentials";
+      const status = 400;
+      const errorCode = "InvalidCredentials";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    const deletedProject = await prisma.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!deletedProject) {
+      const message = "Items to be deleted were not found";
+      const status = 404;
+      const errorCode = "ItemsNotFound";
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    return {
+      deleted: true,
+      project: deletedProject,
+    };
+  }
+
   async deleteProjectByIds({ request }) {
     const user_id = request.authenticatedUser.id;
     const { projectsToDelete } = request.body();

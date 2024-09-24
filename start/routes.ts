@@ -32,6 +32,7 @@ Route.group(() => {
     Route.group(() => {
       Route.post("/create", "UserProfileController.create");
       Route.delete("/:username", "UserProfileController.deleteUserProfile");
+      Route.get("/me", "UserProfileController.getMyProfile");
     }).middleware("supabaseAuth");
 
     Route.get("/:username", "UserProfileController.getUserProfile");
@@ -65,6 +66,7 @@ Route.group(() => {
     Route.get("/", "ProjectsController.getOwnProjects");
     Route.post("/", "ProjectsController.createProjects");
     Route.delete("/", "ProjectsController.deleteProjectByIds");
+    Route.delete("/:projectId", "ProjectsController.deleteById");
     Route.patch("/", "ProjectsController.updateProjectById");
   })
     .middleware("supabaseAuth")

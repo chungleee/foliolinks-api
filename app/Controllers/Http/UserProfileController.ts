@@ -62,6 +62,35 @@ export default class UserProfileController {
         firstName: true,
         lastName: true,
         email: true,
+        membership: true,
+      },
+    });
+
+    return { data: userProfile };
+  }
+
+  protected async getMyProfile({ request }) {
+    const auth_user_id = request.authenticatedUser.id;
+
+    await validator.validate({
+      schema: schema.create({
+        auth_user_id: schema.string(),
+      }),
+      data: {
+        auth_user_id,
+      },
+    });
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id: auth_user_id,
+      },
+      select: {
+        username: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        membership: true,
       },
     });
 
