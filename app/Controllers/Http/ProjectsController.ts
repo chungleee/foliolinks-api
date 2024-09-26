@@ -1,4 +1,5 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { Project } from "@prisma/client";
 import prisma from "../../../prisma/prisma";
 import ProjectException from "../../Exceptions/ProjectException";
 import { schema } from "@ioc:Adonis/Core/Validator";
@@ -54,17 +55,19 @@ export default class ProjectsController {
       throw new ProjectException(message, status, errorCode);
     }
 
-    const data = projects.map((project) => {
+    const data = projects.map((project: Project) => {
       return {
+        ...project,
         user_id,
         username: userProfile.username,
-        ...project,
       };
     });
 
-    const createdProjects = await prisma.project.createMany({
-      data,
-    });
+    const createdProjects = await Promise.all(
+      data.map(async (project: Project) => {
+        return await prisma.project.create({ data: project });
+      })
+    );
 
     return {
       projects: createdProjects,
