@@ -85,6 +85,7 @@ export default class ProjectsController {
         id: true,
         project_name: true,
         project_url: true,
+        project_description: true,
         username: true,
       },
     });
@@ -118,6 +119,13 @@ export default class ProjectsController {
         user_id,
       },
       data: updateProject,
+      select: {
+        id: true,
+        project_name: true,
+        project_url: true,
+        project_description: true,
+        username: true,
+      },
     });
 
     return {
