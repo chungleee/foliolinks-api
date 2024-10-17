@@ -65,7 +65,16 @@ export default class ProjectsController {
 
     const createdProjects = await Promise.all(
       data.map(async (project: Project) => {
-        return await prisma.project.create({ data: project });
+        return await prisma.project.create({
+          data: project,
+          select: {
+            id: true,
+            username: true,
+            project_name: true,
+            project_description: true,
+            project_url: true,
+          },
+        });
       })
     );
 
