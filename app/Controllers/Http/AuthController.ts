@@ -89,6 +89,17 @@ export default class AuthController {
     return { user: userData, access_token };
   }
 
+  async logout({ request }) {
+    const access_token = request.access_token;
+    const { error } = await supabase.auth.signOut(access_token);
+
+    if (error) return { error };
+
+    if (!error) {
+      return { loggedOut: true };
+    }
+  }
+
   async refresh({ request, response }) {
     const refresh_token = request.cookie("foliolinks_auth_refresh_token");
 

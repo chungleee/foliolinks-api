@@ -9,7 +9,7 @@ const CreateUserProfileSchema = schema.create({
 });
 
 export default class UserProfileController {
-  async create({ request }) {
+  async create({ request, response }) {
     const { id, email } = request.authenticatedUser;
     const { username, firstName, lastName } = request.body();
 
@@ -26,6 +26,18 @@ export default class UserProfileController {
 
     await request.validate({ schema: CreateUserProfileSchema });
 
+    const userProfileExists = await prisma.userProfile.findUnique({
+      where: {
+        user_id: id,
+      },
+    });
+
+    if (userProfileExists) {
+      return response.status(400).json({
+        error: "User profile already exists",
+      });
+    }
+
     const data = {
       user_id: id,
       email,
@@ -36,6 +48,13 @@ export default class UserProfileController {
 
     const newUserProfile = await prisma.userProfile.create({
       data,
+      select: {
+        username: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        membership: true,
+      },
     });
 
     return { data: newUserProfile };

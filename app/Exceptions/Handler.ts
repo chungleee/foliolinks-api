@@ -72,7 +72,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       switch (error.code) {
         case "P2002":
           return response.status(400).json({
-            error: "User profile already exist",
+            error: `${error.meta.target[0]} is already taken`,
           });
         case "P2025":
           return response.status(404).json({

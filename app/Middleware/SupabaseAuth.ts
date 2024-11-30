@@ -1,5 +1,12 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { supabase } from "../../config/supabase_config";
+import "@ioc:Adonis/Core/Request";
+
+declare module "@ioc:Adonis/Core/Request" {
+  interface RequestContract {
+    access_token?: string;
+  }
+}
 
 export default class SupabaseAuth {
   public async handle(
@@ -24,6 +31,7 @@ export default class SupabaseAuth {
     }
 
     request.authenticatedUser = user;
+    request.access_token = access_token;
 
     await next();
   }
