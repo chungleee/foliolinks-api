@@ -105,6 +105,7 @@ export default class UserProfileController {
         user_id: auth_user_id,
       },
       select: {
+        id: true,
         username: true,
         firstName: true,
         lastName: true,
