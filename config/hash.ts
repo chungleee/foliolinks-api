@@ -6,7 +6,8 @@
  */
 
 import env from '#start/env'
-import { hashConfig } from '@adonisjs/core/build/config'
+import { defineConfig } from "@adonisjs/core/hash";
+import { drivers } from "@adonisjs/core/hash";
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ import { hashConfig } from '@adonisjs/core/build/config'
 | defined inside `contracts` directory.
 |
 */
-export default hashConfig({
+export default defineConfig({
   /*
   |--------------------------------------------------------------------------
   | Default hasher
@@ -43,15 +44,14 @@ export default hashConfig({
     | https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
     |
     */
-    scrypt: {
-      driver: 'scrypt',
+    scrypt: drivers.scrypt({
       cost: 16384,
       blockSize: 8,
       parallelization: 1,
       saltSize: 16,
       keyLength: 64,
       maxMemory: 32 * 1024 * 1024,
-    },
+    }),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,14 +66,13 @@ export default hashConfig({
     | npm install phc-argon2
     |
     */
-    argon: {
-      driver: 'argon2',
+    argon: drivers.argon2({
       variant: 'id',
       iterations: 3,
       memory: 4096,
       parallelism: 1,
       saltSize: 16,
-    },
+    }),
 
     /*
     |--------------------------------------------------------------------------
@@ -88,9 +87,13 @@ export default hashConfig({
     | npm install phc-bcrypt
     |
     */
-    bcrypt: {
-      driver: 'bcrypt',
+    bcrypt: drivers.bcrypt({
       rounds: 10,
-    },
+    }),
   },
 })
+
+
+declare module '@adonisjs/core/types' {
+  export interface HashersList extends InferHashers<typeof hashConfig> { }
+}

@@ -5,9 +5,9 @@
  * file.
  */
 import env from "#start/env";
-import type { CorsConfig } from "@ioc:Adonis/Core/Cors";
+import { defineConfig } from "@adonisjs/cors";
 
-const corsConfig: CorsConfig = {
+const corsConfig = defineConfig({
   /*
   |--------------------------------------------------------------------------
   | Enabled
@@ -133,6 +133,6 @@ const corsConfig: CorsConfig = {
   |
   */
   maxAge: 90,
-};
+});
 
 export default corsConfig;
