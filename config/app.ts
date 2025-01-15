@@ -5,13 +5,13 @@
  * file.
  */
 
-import proxyAddr from "proxy-addr";
-import env from "#start/env";
-import type { ProfilerConfig } from "@ioc:Adonis/Core/Profiler";
-import { ServerConfig } from "@adonisjs/core/services/server";
-import { LoggerConfig } from "@adonisjs/core/types/logger";
-import { ValidatorConfig } from "@adonisjs/validator/types";
-import { defineConfig } from "@adonisjs/core/http";
+import proxyAddr from 'proxy-addr'
+import env from '#start/env'
+import type { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
+import { ServerConfig } from '@adonisjs/core/services/server'
+import { LoggerConfig } from '@adonisjs/core/types/logger'
+import { ValidatorConfig } from '@adonisjs/validator/types'
+import { defineConfig } from '@adonisjs/core/http'
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +26,7 @@ import { defineConfig } from "@adonisjs/core/http";
 | be decrypted.
 |
 */
-export const appKey: string = env.get("APP_KEY");
+export const appKey: string = env.get('APP_KEY')
 
 /*
 |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ export const http = defineConfig({
   | headers.
   |
   */
-  trustProxy: proxyAddr.compile("loopback"),
+  trustProxy: proxyAddr.compile('loopback'),
 
   /*
   |--------------------------------------------------------------------------
@@ -95,7 +95,7 @@ export const http = defineConfig({
   | JSONP Callback
   |--------------------------------------------------------------------------
   */
-  jsonpCallbackName: "callback",
+  jsonpCallbackName: 'callback',
 
   /*
   |--------------------------------------------------------------------------
@@ -103,13 +103,13 @@ export const http = defineConfig({
   |--------------------------------------------------------------------------
   */
   cookie: {
-    domain: env.get("NODE_ENV") === "production" ? ".leonchung.ca" : "",
+    domain: env.get('NODE_ENV') === 'production' ? '.leonchung.ca' : '',
     // domain: ".leonchung.ca",
-    path: "/",
-    maxAge: "2h",
+    path: '/',
+    maxAge: '2h',
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: 'none',
   },
 
   /*
@@ -128,8 +128,8 @@ export const http = defineConfig({
   | client to set the header explicitly.
   |
   */
-  forceContentNegotiationTo: "application/json",
-});
+  forceContentNegotiationTo: 'application/json',
+})
 
 /*
 |--------------------------------------------------------------------------
@@ -149,7 +149,7 @@ export const logger: LoggerConfig = {
   | reading the `name` property from the `package.json` file.
   |
   */
-  name: env.get("APP_NAME"),
+  name: env.get('APP_NAME'),
 
   /*
   |--------------------------------------------------------------------------
@@ -171,7 +171,7 @@ export const logger: LoggerConfig = {
   | at deployment level and not code level.
   |
   */
-  level: env.get("LOG_LEVEL", "info"),
+  level: env.get('LOG_LEVEL', 'info'),
 
   /*
   |--------------------------------------------------------------------------
@@ -182,8 +182,8 @@ export const logger: LoggerConfig = {
   | can have huge impact on performance.
   |
   */
-  prettyPrint: env.get("NODE_ENV") === "development",
-};
+  prettyPrint: env.get('NODE_ENV') === 'development',
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -222,7 +222,7 @@ export const profiler: ProfilerConfig = {
   |
   */
   whitelist: [],
-};
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -233,4 +233,4 @@ export const profiler: ProfilerConfig = {
 | to the default config https://git.io/JT0WE
 |
 */
-export const validator: ValidatorConfig = {};
+export const validator: ValidatorConfig = {}

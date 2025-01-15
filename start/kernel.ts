@@ -9,7 +9,7 @@
 |
 */
 
-import server from "@adonisjs/core/services/server";
+import server from '@adonisjs/core/services/server'
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +20,7 @@ import server from "@adonisjs/core/services/server";
 | are defined for every HTTP requests.
 |
 */
-server.middleware.register([
-  () => import("@ioc:Adonis/Core/BodyParser"),
-  () => import("@ioc:EidelLev/Inertia/Middleware"),
-]);
+server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
 
 /*
 |--------------------------------------------------------------------------
@@ -42,5 +39,5 @@ server.middleware.register([
 |
 */
 server.middleware.registerNamed({
-  supabaseAuth: () => import("../app/Middleware/SupabaseAuth"),
-});
+  supabaseAuth: () => import('../app/Middleware/SupabaseAuth'),
+})
