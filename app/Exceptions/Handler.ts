@@ -1,4 +1,4 @@
-import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { HttpContext } from "@adonisjs/core/http";
 /*
 |--------------------------------------------------------------------------
 | Http Exception Handler
@@ -14,16 +14,16 @@ import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 |
 */
 
-import Logger from "@ioc:Adonis/Core/Logger";
-import HttpExceptionHandler from "@ioc:Adonis/Core/HttpExceptionHandler";
+import logger from "@adonisjs/core/services/logger";
 import { Prisma } from "@prisma/client";
+import { ExceptionHandler } from "@adonisjs/core/http";
 
-export default class ExceptionHandler extends HttpExceptionHandler {
+export default class ExceptionHandler extends ExceptionHandler {
   constructor() {
-    super(Logger);
+    super(logger);
   }
 
-  async handle(error: any, { response }: HttpContextContract) {
+  async handle(error: any, { response }: HttpContext) {
     console.log("ERROR: ", error);
 
     if (error.name === "ValidationException") {
@@ -84,6 +84,6 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       }
     }
 
-    return super.handle(error, { response } as HttpContextContract);
+    return super.handle(error, { response } as HttpContext);
   }
 }

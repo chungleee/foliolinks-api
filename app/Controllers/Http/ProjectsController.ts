@@ -2,7 +2,7 @@
 import { Project } from "@prisma/client";
 import prisma from "../../../prisma/prisma";
 import ProjectException from "../../Exceptions/ProjectException";
-import { schema } from "@ioc:Adonis/Core/Validator";
+import { schema } from "@adonisjs/validator";
 
 export default class ProjectsController {
   async createProjects({ request }) {

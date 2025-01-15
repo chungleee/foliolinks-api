@@ -1,5 +1,5 @@
-import { Exception } from "@adonisjs/core/build/standalone";
-import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { HttpContext } from "@adonisjs/core/http";
+import { Exception } from "@adonisjs/core/exceptions";
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +14,7 @@ import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 |
 */
 export default class ProjectException extends Exception {
-  public async handle(error: this, { response }: HttpContextContract) {
+  public async handle(error: this, { response }: HttpContext) {
     return response
       .status(error.status)
       .json({ error: error.message, errorCode: error.code });

@@ -1,6 +1,6 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import prisma from "../../../prisma/prisma";
-import { schema, rules, validator } from "@ioc:Adonis/Core/Validator";
+import { schema, rules, validator } from "@adonisjs/validator";
 
 const CreateUserProfileSchema = schema.create({
   username: schema.string(),

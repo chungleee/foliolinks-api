@@ -5,7 +5,7 @@
  * file.
  */
 
-import Env from '@ioc:Adonis/Core/Env'
+import env from '#start/env'
 import { hashConfig } from '@adonisjs/core/build/config'
 
 /*
@@ -27,7 +27,7 @@ export default hashConfig({
   | free to change the default value
   |
   */
-  default: Env.get('HASH_DRIVER', 'scrypt'),
+  default: env.get('HASH_DRIVER', 'scrypt'),
 
   list: {
     /*

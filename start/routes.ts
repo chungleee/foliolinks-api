@@ -18,9 +18,9 @@
 |
 */
 
-import Route from "@ioc:Adonis/Core/Route";
+import router from "@adonisjs/core/services/router";
 
-Route.group(() => {
+router.group(() => {
   /**
    * USER PROFILE CONTROLLER
    * ROUTE /api/users/profile/
@@ -28,14 +28,14 @@ Route.group(() => {
    * PRIVATE DELETE /:username
    * PUBLIC GET /:username
    */
-  Route.group(() => {
-    Route.group(() => {
-      Route.post("/create", "UserProfileController.create");
-      Route.delete("/:username", "UserProfileController.deleteUserProfile");
-      Route.get("/me", "UserProfileController.getMyProfile");
+  router.group(() => {
+    router.group(() => {
+      router.post("/create", "UserProfileController.create");
+      router.delete("/:username", "UserProfileController.deleteUserProfile");
+      router.get("/me", "UserProfileController.getMyProfile");
     }).middleware("supabaseAuth");
 
-    Route.get("/:username", "UserProfileController.getUserProfile");
+    router.get("/:username", "UserProfileController.getUserProfile");
   }).prefix("/profile");
 
   // ******************************************************************
@@ -46,11 +46,11 @@ Route.group(() => {
    * PRIVATE POST /login
    * PRIVATE POST /refresh
    */
-  Route.group(() => {
-    Route.post("/register", "AuthController.register");
-    Route.post("/login", "AuthController.login");
-    Route.post("/refresh", "AuthController.refresh");
-    Route.post("/logout", "AuthController.logout").middleware("supabaseAuth");
+  router.group(() => {
+    router.post("/register", "AuthController.register");
+    router.post("/login", "AuthController.login");
+    router.post("/refresh", "AuthController.refresh");
+    router.post("/logout", "AuthController.logout").middleware("supabaseAuth");
   }).prefix("/auth");
 
   // ******************************************************************
@@ -63,17 +63,17 @@ Route.group(() => {
    * PRIVATE PATCH /
    */
 
-  Route.group(() => {
-    Route.get("/", "ProjectsController.getOwnProjects");
-    Route.post("/", "ProjectsController.createProjects");
-    Route.delete("/", "ProjectsController.deleteProjectByIds");
-    Route.delete("/:projectId", "ProjectsController.deleteById");
-    Route.patch("/", "ProjectsController.updateProjectById");
+  router.group(() => {
+    router.get("/", "ProjectsController.getOwnProjects");
+    router.post("/", "ProjectsController.createProjects");
+    router.delete("/", "ProjectsController.deleteProjectByIds");
+    router.delete("/:projectId", "ProjectsController.deleteById");
+    router.patch("/", "ProjectsController.updateProjectById");
   })
     .middleware("supabaseAuth")
     .prefix("/projects");
 }).prefix("/api/users");
 
-Route.get("/ping", async () => {
+router.get("/ping", async () => {
   return { ping: "pinged" };
 });

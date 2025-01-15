@@ -1,7 +1,7 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import Env from "@ioc:Adonis/Core/Env";
+import env from "#start/env";
 import { supabase } from "../../../config/supabase_config";
-import { schema, rules } from "@ioc:Adonis/Core/Validator";
+import { schema, rules } from "@adonisjs/validator";
 import prisma from "../../../prisma/prisma";
 
 const newRegisterSchema = schema.create({
@@ -83,8 +83,8 @@ export default class AuthController {
 
     response.cookie("foliolinks_auth_refresh_token", refresh_token, {
       maxAge: "30d",
-      secure: Env.get("NODE_ENV") === "production" ? true : false,
-      sameSite: Env.get("NODE_ENV") === "production" ? "none" : "lax",
+      secure: env.get("NODE_ENV") === "production" ? true : false,
+      sameSite: env.get("NODE_ENV") === "production" ? "none" : "lax",
     });
     return { user: userData, access_token };
   }
@@ -118,8 +118,8 @@ export default class AuthController {
 
     response.cookie("foliolinks_auth_refresh_token", new_refresh_token, {
       maxAge: "30d",
-      secure: Env.get("NODE_ENV") === "production" ? true : false,
-      sameSite: Env.get("NODE_ENV") === "production" ? "none" : "lax",
+      secure: env.get("NODE_ENV") === "production" ? true : false,
+      sameSite: env.get("NODE_ENV") === "production" ? "none" : "lax",
     });
     return { access_token };
   }

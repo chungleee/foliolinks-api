@@ -4,7 +4,7 @@
  * Feel free to let us know via PR, if you find something broken in this config
  * file.
  */
-import Env from "@ioc:Adonis/Core/Env";
+import env from "#start/env";
 import type { CorsConfig } from "@ioc:Adonis/Core/Cors";
 
 const corsConfig: CorsConfig = {
@@ -47,7 +47,7 @@ const corsConfig: CorsConfig = {
 
   // origin: ["https://foliolinks.leonchung.ca"],
   origin:
-    Env.get("NODE_ENV") === "production"
+    env.get("NODE_ENV") === "production"
       ? "https://foliolinks.leonchung.ca"
       : "https://localhost:5173",
   /*

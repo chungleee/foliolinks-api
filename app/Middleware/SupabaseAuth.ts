@@ -1,4 +1,4 @@
-import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import type { HttpContext } from "@adonisjs/core/http";
 import { supabase } from "../../config/supabase_config";
 import "@ioc:Adonis/Core/Request";
 
@@ -10,7 +10,7 @@ declare module "@ioc:Adonis/Core/Request" {
 
 export default class SupabaseAuth {
   public async handle(
-    { request }: HttpContextContract,
+    { request }: HttpContext,
     next: () => Promise<void>
   ) {
     const bearerToken = request.header("authorization");
