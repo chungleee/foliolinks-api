@@ -1,9 +1,7 @@
 {
   "typescript": true,
   "commands": [
-    "./commands",
-    "@adonisjs/core/build/commands/index.js",
-    "@adonisjs/repl/build/commands",
+    "@adonisjs/core/commands",
     "@eidellev/inertia-adonisjs/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
@@ -25,9 +23,17 @@
   ],
   "providers": [
     "./providers/AppProvider",
-    "@adonisjs/core",
-    "@adonisjs/view",
-    "@adonisjs/session",
+    "@adonisjs/core/providers/app_provider",
+    "@adonisjs/core/providers/hash_provider",
+    {
+      "file": "@adonisjs/core/providers/repl_provider",
+      "environment": [
+        "repl",
+        "test"
+      ]
+    },
+    "@adonisjs/core/providers/edge_provider",
+    "@adonisjs/session/session_provider",
     "@eidellev/inertia-adonisjs"
   ],
   "aceProviders": [
