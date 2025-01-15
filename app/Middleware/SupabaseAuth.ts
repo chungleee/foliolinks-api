@@ -1,5 +1,5 @@
 import type { HttpContext } from "@adonisjs/core/http";
-import { supabase } from "../../config/supabase_config";
+import { supabase } from "../../config/supabase_config.js";
 import "@ioc:Adonis/Core/Request";
 
 declare module "@ioc:Adonis/Core/Request" {

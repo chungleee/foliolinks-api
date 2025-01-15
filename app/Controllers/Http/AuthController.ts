@@ -1,8 +1,8 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import env from "#start/env";
-import { supabase } from "../../../config/supabase_config";
+import { supabase } from "../../../config/supabase_config.js";
 import { schema, rules } from "@adonisjs/validator";
-import prisma from "../../../prisma/prisma";
+import prisma from "../../../prisma/prisma.js";
 
 const newRegisterSchema = schema.create({
   email: schema.string([rules.email(), rules.trim()]),

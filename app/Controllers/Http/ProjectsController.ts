@@ -1,7 +1,7 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { Project } from "@prisma/client";
-import prisma from "../../../prisma/prisma";
-import ProjectException from "../../Exceptions/ProjectException";
+import prisma from "../../../prisma/prisma.js";
+import ProjectException from "../../Exceptions/ProjectException.js";
 import { schema } from "@adonisjs/validator";
 
 export default class ProjectsController {
