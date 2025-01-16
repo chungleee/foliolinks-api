@@ -33,6 +33,16 @@ model Project {
   project_url  String
 }
 
+model ApiKey {
+  id  BigInt  @id @default(autoincrement())
+  user_id String @unique
+  key String @unique
+  scope String?
+  isRevoked Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum MembershipTier {
   BASIC
   PRO
