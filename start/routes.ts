@@ -82,6 +82,7 @@ Route.group(() => {
  */
 Route.group(() => {
   Route.post('/generate-api-key', 'ApikeysController.generateApiKey');
+  Route.post('/revoke-api-key', 'ApikeysController.revokeApiKey');
 })
   .prefix('/api/apikey')
   .middleware('supabaseAuth');
