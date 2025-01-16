@@ -12,17 +12,17 @@
 |
 */
 
-import Env from "@ioc:Adonis/Core/Env";
+import Env from '@ioc:Adonis/Core/Env'
 
 export default Env.rules({
-  HOST: Env.schema.string({ format: "host" }),
+  HOST: Env.schema.string({ format: 'host' }),
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
   APP_NAME: Env.schema.string(),
-  DRIVE_DISK: Env.schema.enum(["local"] as const),
-  NODE_ENV: Env.schema.enum(["development", "production", "test"] as const),
+  DRIVE_DISK: Env.schema.enum(['local'] as const),
+  NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
   SUPABASE_URL: Env.schema.string(),
   SUPABASE_KEY: Env.schema.string(),
   DATABASE_URL: Env.schema.string(),
   SESSION_DRIVER: Env.schema.string(),
-});
+})

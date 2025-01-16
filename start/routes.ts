@@ -18,7 +18,7 @@
 |
 */
 
-import Route from "@ioc:Adonis/Core/Route";
+import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
   /**
@@ -30,13 +30,13 @@ Route.group(() => {
    */
   Route.group(() => {
     Route.group(() => {
-      Route.post("/create", "UserProfileController.create");
-      Route.delete("/:username", "UserProfileController.deleteUserProfile");
-      Route.get("/me", "UserProfileController.getMyProfile");
-    }).middleware("supabaseAuth");
+      Route.post('/create', 'UserProfileController.create')
+      Route.delete('/:username', 'UserProfileController.deleteUserProfile')
+      Route.get('/me', 'UserProfileController.getMyProfile')
+    }).middleware('supabaseAuth')
 
-    Route.get("/:username", "UserProfileController.getUserProfile");
-  }).prefix("/profile");
+    Route.get('/:username', 'UserProfileController.getUserProfile')
+  }).prefix('/profile')
 
   // ******************************************************************
   /**
@@ -47,11 +47,11 @@ Route.group(() => {
    * PRIVATE POST /refresh
    */
   Route.group(() => {
-    Route.post("/register", "AuthController.register");
-    Route.post("/login", "AuthController.login");
-    Route.post("/refresh", "AuthController.refresh");
-    Route.post("/logout", "AuthController.logout").middleware("supabaseAuth");
-  }).prefix("/auth");
+    Route.post('/register', 'AuthController.register')
+    Route.post('/login', 'AuthController.login')
+    Route.post('/refresh', 'AuthController.refresh')
+    Route.post('/logout', 'AuthController.logout').middleware('supabaseAuth')
+  }).prefix('/auth')
 
   // ******************************************************************
   /**
@@ -64,16 +64,16 @@ Route.group(() => {
    */
 
   Route.group(() => {
-    Route.get("/", "ProjectsController.getOwnProjects");
-    Route.post("/", "ProjectsController.createProjects");
-    Route.delete("/", "ProjectsController.deleteProjectByIds");
-    Route.delete("/:projectId", "ProjectsController.deleteById");
-    Route.patch("/", "ProjectsController.updateProjectById");
+    Route.get('/', 'ProjectsController.getOwnProjects')
+    Route.post('/', 'ProjectsController.createProjects')
+    Route.delete('/', 'ProjectsController.deleteProjectByIds')
+    Route.delete('/:projectId', 'ProjectsController.deleteById')
+    Route.patch('/', 'ProjectsController.updateProjectById')
   })
-    .middleware("supabaseAuth")
-    .prefix("/projects");
-}).prefix("/api/users");
+    .middleware('supabaseAuth')
+    .prefix('/projects')
+}).prefix('/api/users')
 
-Route.get("/ping", async () => {
-  return { ping: "pinged" };
-});
+Route.get('/ping', async () => {
+  return { ping: 'pinged' }
+})
