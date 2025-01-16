@@ -11,7 +11,7 @@
 | and hence do not rename or move this file to a different location.
 |
 */
-import { Env } from "@adonisjs/core/env";
+import { Env } from "@adonisjs/core/env"
 
 export default await Env.create(new URL("../", import.meta.url), {
   HOST: Env.schema.string({ format: "host" }),
@@ -25,4 +25,4 @@ export default await Env.create(new URL("../", import.meta.url), {
   DATABASE_URL: Env.schema.string(),
   SESSION_DRIVER: Env.schema.string(),
 })
-;
+

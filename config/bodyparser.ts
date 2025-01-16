@@ -6,7 +6,7 @@
  */
 
 import type { BodyParserConfig } from '@adonisjs/core/bodyparser'
-import { defineConfig } from "@adonisjs/core/bodyparser";
+import { defineConfig } from '@adonisjs/core/bodyparser'
 
 const bodyParserConfig = defineConfig({
   /*
@@ -18,7 +18,7 @@ const bodyParserConfig = defineConfig({
   | to avoid body parsing for `GET` requests.
   |
   */
-  whitelistedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],
 
   /*
   |--------------------------------------------------------------------------
@@ -67,9 +67,7 @@ const bodyParserConfig = defineConfig({
     */
     convertEmptyStringsToNull: true,
 
-    types: [
-      'application/x-www-form-urlencoded',
-    ],
+    types: ['application/x-www-form-urlencoded'],
   },
 
   /*
@@ -85,10 +83,7 @@ const bodyParserConfig = defineConfig({
   raw: {
     encoding: 'utf-8',
     limit: '1mb',
-    queryString: {},
-    types: [
-      'text/*',
-    ],
+    types: ['text/*'],
   },
 
   /*
@@ -203,9 +198,7 @@ const bodyParserConfig = defineConfig({
     | The types that will be considered and parsed as multipart body.
     |
     */
-    types: [
-      'multipart/form-data',
-    ],
+    types: ['multipart/form-data'],
   },
 })
 

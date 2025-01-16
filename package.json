@@ -44,12 +44,14 @@
     "prisma": "^5.5.2",
     "ts-node": "^10.9.2",
     "typescript": "~4.6",
+    "vite": "^6.0.7",
     "webpack": "^5.72",
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
     "@adonisjs/core": "^6.17.1",
     "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/drive": "^3.2.0",
     "@adonisjs/session": "^7.5.0",
     "@adonisjs/validator": "^13.0.2",
     "@adonisjs/vite": "^4.0.0",

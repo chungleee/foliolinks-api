@@ -36,12 +36,18 @@ export default defineConfig({
     { file: () => import('@adonisjs/core/providers/repl_provider'), environment: ['repl', 'test'] },
     () => import('@adonisjs/core/providers/edge_provider'),
     () => import('@adonisjs/session/session_provider'),
+    () => import('@adonisjs/vite/vite_provider'),
+    () => import('@adonisjs/drive/drive_provider')
   ],
   metaFiles: [
     {
       pattern: 'resources/views/**/*.edge',
       reloadServer: false,
     },
+    {
+      pattern: 'public/**',
+      reloadServer: false,
+    }
   ],
   /*
   |--------------------------------------------------------------------------
@@ -61,4 +67,8 @@ export default defineConfig({
       },
     ],
   },
+  hooks: {
+    onBuildStarting: [() => import('@adonisjs/vite/build_hook')]
+  },
+  assetsBundler: false
 })

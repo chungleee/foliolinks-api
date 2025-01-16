@@ -1,4 +1,4 @@
-import { HttpContext } from "@adonisjs/core/http";
+import { HttpContext } from '@adonisjs/core/http'
 /*
 |--------------------------------------------------------------------------
 | Http Exception Handler
@@ -14,49 +14,47 @@ import { HttpContext } from "@adonisjs/core/http";
 |
 */
 
-import logger from "@adonisjs/core/services/logger";
-import { Prisma } from "@prisma/client";
-import { ExceptionHandler } from "@adonisjs/core/http";
+import logger from '@adonisjs/core/services/logger'
+import { Prisma } from '@prisma/client'
+import { ExceptionHandler } from '@adonisjs/core/http'
 
 export default class ExceptionHandler extends ExceptionHandler {
   constructor() {
-    super(logger);
+    super(logger)
   }
 
   async handle(error: any, { response }: HttpContext) {
-    console.log("ERROR: ", error);
+    console.log('ERROR: ', error)
 
-    if (error.name === "ValidationException") {
-      return response.status(200).json({ error: error.messages.errors });
+    if (error.name === 'ValidationException') {
+      return response.status(200).json({ error: error.messages.errors })
     }
 
-    if (error.name === "AuthApiError") {
-      if (error.message.includes("invalid claim")) {
-        return response.status(error.status).json({ error: "Please log in" });
+    if (error.name === 'AuthApiError') {
+      if (error.message.includes('invalid claim')) {
+        return response.status(error.status).json({ error: 'Please log in' })
       }
 
-      if (error.message.includes("invalid JWT")) {
-        return response
-          .status(error.status)
-          .json({ error: "Invalid credentials" });
+      if (error.message.includes('invalid JWT')) {
+        return response.status(error.status).json({ error: 'Invalid credentials' })
       }
 
-      return response.status(error.status).json({ error: error.message });
+      return response.status(error.status).json({ error: error.message })
     }
 
-    if (error.message === "Unauthorized") {
-      return response.status(403).json({ error: "Invalid credentials" });
+    if (error.message === 'Unauthorized') {
+      return response.status(403).json({ error: 'Invalid credentials' })
     }
 
-    if (error.message === "ProfileDeletionError") {
+    if (error.message === 'ProfileDeletionError') {
       return response.status(400).json({
-        error: "Cannot find user profile",
-      });
+        error: 'Cannot find user profile',
+      })
     }
-    if (error.message === "ProfileDoesNotExist") {
+    if (error.message === 'ProfileDoesNotExist') {
       return response.status(404).json({
-        error: "User profile does not exist",
-      });
+        error: 'User profile does not exist',
+      })
     }
 
     // MEMBERSHIP ERRORS
@@ -70,20 +68,20 @@ export default class ExceptionHandler extends ExceptionHandler {
       // PRISMA ERRORS
 
       switch (error.code) {
-        case "P2002":
+        case 'P2002':
           return response.status(400).json({
             error: `${error.meta.target[0]} is already taken`,
-          });
-        case "P2025":
+          })
+        case 'P2025':
           return response.status(404).json({
             error: error.meta,
             // error: "User profile does not exist",
-          });
+          })
         default:
-          return response.status(500).json({ error: "Internal server error" });
+          return response.status(500).json({ error: 'Internal server error' })
       }
     }
 
-    return super.handle(error, { response } as HttpContext);
+    return super.handle(error, { response } as HttpContext)
   }
 }
