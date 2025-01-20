@@ -1,8 +1,8 @@
 // import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import Env from "@ioc:Adonis/Core/Env";
-import { supabase } from "../../../config/supabase_config";
-import { schema, rules } from "@ioc:Adonis/Core/Validator";
-import prisma from "../../../prisma/prisma";
+import Env from '@ioc:Adonis/Core/Env';
+import { supabase } from '../../../config/supabase_config';
+import { schema, rules } from '@ioc:Adonis/Core/Validator';
+import prisma from '../../../prisma/prisma';
 
 const newRegisterSchema = schema.create({
   email: schema.string([rules.email(), rules.trim()]),
@@ -15,7 +15,7 @@ const loginSchema = schema.create({
 });
 
 export default class AuthController {
-  async register({ request, response }) {
+  public async register({ request, response }) {
     const { email, password } = request.body();
     await request.validate({ schema: newRegisterSchema });
 
@@ -24,7 +24,9 @@ export default class AuthController {
       password,
     });
 
-    if (error) response.send(error);
+    if (error) {
+      response.send(error);
+    }
 
     const { session, user } = data;
     const access_token = session?.access_token;
@@ -36,11 +38,11 @@ export default class AuthController {
       role: user?.role,
     };
 
-    response.cookie("foliolinks_auth_refresh_token", refresh_token);
+    response.cookie('foliolinks_auth_refresh_token', refresh_token);
     return { user: userData, access_token };
   }
 
-  async login({ request, response }) {
+  public async login({ request, response }) {
     const { email, password } = request.body();
     await request.validate({ schema: loginSchema });
 
@@ -81,27 +83,29 @@ export default class AuthController {
       userProfile,
     };
 
-    response.cookie("foliolinks_auth_refresh_token", refresh_token, {
-      maxAge: "30d",
-      secure: Env.get("NODE_ENV") === "production" ? true : false,
-      sameSite: Env.get("NODE_ENV") === "production" ? "none" : "lax",
+    response.cookie('foliolinks_auth_refresh_token', refresh_token, {
+      maxAge: '30d',
+      secure: Env.get('NODE_ENV') === 'production' ? true : false,
+      sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
     return { user: userData, access_token };
   }
 
-  async logout({ request }) {
+  public async logout({ request }) {
     const access_token = request.access_token;
     const { error } = await supabase.auth.signOut(access_token);
 
-    if (error) return { error };
+    if (error) {
+      return { error };
+    }
 
     if (!error) {
       return { loggedOut: true };
     }
   }
 
-  async refresh({ request, response }) {
-    const refresh_token = request.cookie("foliolinks_auth_refresh_token");
+  public async refresh({ request, response }) {
+    const refresh_token = request.cookie('foliolinks_auth_refresh_token');
 
     const { data, error } = await supabase.auth.refreshSession({
       refresh_token,
@@ -116,10 +120,10 @@ export default class AuthController {
     const access_token = session?.access_token;
     const new_refresh_token = session?.refresh_token;
 
-    response.cookie("foliolinks_auth_refresh_token", new_refresh_token, {
-      maxAge: "30d",
-      secure: Env.get("NODE_ENV") === "production" ? true : false,
-      sameSite: Env.get("NODE_ENV") === "production" ? "none" : "lax",
+    response.cookie('foliolinks_auth_refresh_token', new_refresh_token, {
+      maxAge: '30d',
+      secure: Env.get('NODE_ENV') === 'production' ? true : false,
+      sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
     return { access_token };
   }

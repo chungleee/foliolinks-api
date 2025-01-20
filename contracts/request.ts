@@ -1,6 +1,6 @@
-import { User } from "@supabase/supabase-js";
+import { User } from '@supabase/supabase-js'
 
-declare module "@ioc:Adonis/Core/Request" {
+declare module '@ioc:Adonis/Core/Request' {
   interface RequestContract {
     authenticatedUser: User | null;
   }

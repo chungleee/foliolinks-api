@@ -4,8 +4,8 @@
  * Feel free to let us know via PR, if you find something broken in this config
  * file.
  */
-import Env from "@ioc:Adonis/Core/Env";
-import type { CorsConfig } from "@ioc:Adonis/Core/Cors";
+import Env from '@ioc:Adonis/Core/Env'
+import type { CorsConfig } from '@ioc:Adonis/Core/Cors'
 
 const corsConfig: CorsConfig = {
   /*
@@ -47,9 +47,9 @@ const corsConfig: CorsConfig = {
 
   // origin: ["https://foliolinks.leonchung.ca"],
   origin:
-    Env.get("NODE_ENV") === "production"
-      ? "https://foliolinks.leonchung.ca"
-      : "https://localhost:5173",
+    Env.get('NODE_ENV') === 'production'
+      ? 'https://foliolinks.leonchung.ca'
+      : 'https://localhost:5173',
   /*
   |--------------------------------------------------------------------------
   | Methods
@@ -60,7 +60,7 @@ const corsConfig: CorsConfig = {
   |
   | Following is the list of default methods. Feel free to add more.
   */
-  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
 
   /*
   |--------------------------------------------------------------------------
@@ -102,12 +102,12 @@ const corsConfig: CorsConfig = {
   |
   */
   exposeHeaders: [
-    "cache-control",
-    "content-language",
-    "content-type",
-    "expires",
-    "last-modified",
-    "pragma",
+    'cache-control',
+    'content-language',
+    'content-type',
+    'expires',
+    'last-modified',
+    'pragma',
   ],
 
   /*
@@ -133,6 +133,6 @@ const corsConfig: CorsConfig = {
   |
   */
   maxAge: 90,
-};
+}
 
-export default corsConfig;
+export default corsConfig
