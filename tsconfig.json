@@ -18,8 +18,7 @@
       "@adonisjs/repl",
       "@japa/preset-adonis/build/adonis-typings",
       "@adonisjs/view",
-      "@adonisjs/session",
-      "@eidellev/inertia-adonisjs"
+      "@adonisjs/session"
     ]
   }
 }
