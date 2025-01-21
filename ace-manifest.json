@@ -95,26 +95,6 @@
       "args": [],
       "aliases": [],
       "flags": []
-    },
-    "ssr:build": {
-      "settings": {
-        "stayAlive": true
-      },
-      "commandName": "ssr:build",
-      "description": "Build and watch files for changes",
-      "args": [],
-      "aliases": [],
-      "flags": []
-    },
-    "ssr:watch": {
-      "settings": {
-        "stayAlive": true
-      },
-      "commandName": "ssr:watch",
-      "description": "Build and watch files for changes",
-      "args": [],
-      "aliases": [],
-      "flags": []
     }
   },
   "aliases": {}

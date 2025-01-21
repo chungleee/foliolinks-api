@@ -3,10 +3,11 @@
   "include": ["**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
+    "jsxImportSource": "preact",
     "outDir": "build",
     "rootDir": "./",
     "sourceMap": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "paths": {
       "App/*": ["./app/*"],
       "Config/*": ["./config/*"],

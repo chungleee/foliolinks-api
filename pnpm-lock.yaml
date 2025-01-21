@@ -35,6 +35,12 @@ importers:
       phc-argon2:
         specifier: ^1.1.4
         version: 1.1.4
+      preact:
+        specifier: ^10.25.4
+        version: 10.25.4
+      preact-render-to-string:
+        specifier: ^6.5.13
+        version: 6.5.13(preact@10.25.4)
       proxy-addr:
         specifier: ^2.0.7
         version: 2.0.7
@@ -4232,6 +4238,14 @@ packages:
   postcss@8.4.33:
     resolution: {integrity: sha512-Kkpbhhdjw2qQs2O2DGX+8m5OVqEcbB9HRBvuYM9pgrjEFUg30A9LmXNlTAUj4S9kgtGyrMbTzVjH7E+s5Re2yg==}
     engines: {node: ^10 || ^12 || >=14}
+
+  preact-render-to-string@6.5.13:
+    resolution: {integrity: sha512-iGPd+hKPMFKsfpR2vL4kJ6ZPcFIoWZEcBf0Dpm3zOpdVvj77aY8RlLiQji5OMrngEyaxGogeakTb54uS2FvA6w==}
+    peerDependencies:
+      preact: '>=10'
+
+  preact@10.25.4:
+    resolution: {integrity: sha512-jLdZDb+Q+odkHJ+MpW/9U5cODzqnB+fy2EiHSZES7ldV5LK7yjlVzTp7R8Xy6W6y75kfK8iWYtFVH7lvjwrCMA==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -10016,6 +10030,12 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  preact-render-to-string@6.5.13(preact@10.25.4):
+    dependencies:
+      preact: 10.25.4
+
+  preact@10.25.4: {}
 
   prelude-ls@1.2.1: {}
 
