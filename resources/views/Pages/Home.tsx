@@ -1,21 +1,25 @@
+import { Project } from '@prisma/client';
 import type { FunctionComponent } from 'preact';
 
-type HomeProps = {
-  name: string;
-  list: string[];
+type UserProfileProps = {
+  username: string;
+  projects: Project[];
 };
-const Home: FunctionComponent<HomeProps> = ({ name, list }) => {
+const UserProfile: FunctionComponent<UserProfileProps> = ({
+  username,
+  projects,
+}) => {
   return (
     <div>
-      <h1>Hello, {name}!</h1>
+      <h1>Hello, {username}!</h1>
       <p>This is happening in preact</p>
       <ul>
-        {list.map((e) => {
-          return <li>{e}</li>;
+        {projects.map((project) => {
+          return <li>{project.project_name}</li>;
         })}
       </ul>
     </div>
   );
 };
 
-export default Home;
+export default UserProfile;
