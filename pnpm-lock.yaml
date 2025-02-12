@@ -32,6 +32,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: 18.2.18
+      modern-normalize:
+        specifier: ^3.0.1
+        version: 3.0.1
       phc-argon2:
         specifier: ^1.1.4
         version: 1.1.4
@@ -3789,6 +3792,10 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
+
+  modern-normalize@3.0.1:
+    resolution: {integrity: sha512-VqlMdYi59Uch6fnUPxnpijWUQe+TW6zeWCvyr6Mb7JibheHzSuAAoJi2c71ZwIaWKpECpGpYHoaaBp6rBRr+/g==}
+    engines: {node: '>=6'}
 
   mrm-core@7.1.13:
     resolution: {integrity: sha512-+AlsNuryLYw9HWqf+HBcNXULiwBEfcmb2VDccvYyg71x25bC8nJOn0YJA13x1PUUEF0aEbc5RTfqa6weMtRHaw==}
@@ -9705,6 +9712,8 @@ snapshots:
       is-extendable: 1.0.1
 
   mkdirp@1.0.4: {}
+
+  modern-normalize@3.0.1: {}
 
   mrm-core@7.1.13:
     dependencies:
