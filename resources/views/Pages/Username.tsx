@@ -1,5 +1,3 @@
-import '../../css/app.css';
-
 import ProjectLink from '../Components/ProjectLink/ProjectLink';
 import { Project, UserProfile } from '@prisma/client';
 

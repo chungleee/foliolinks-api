@@ -1,5 +1,5 @@
-const { join } = require("path");
-const Encore = require("@symfony/webpack-encore");
+const { join } = require('path');
+const Encore = require('@symfony/webpack-encore');
 
 /*
 |--------------------------------------------------------------------------
@@ -7,7 +7,7 @@ const Encore = require("@symfony/webpack-encore");
 |--------------------------------------------------------------------------
 */
 if (!Encore.isRuntimeEnvironmentConfigured()) {
-  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || "dev");
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
 /*
@@ -19,7 +19,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 | be inside the public directory, so that AdonisJS can serve it.
 |
 */
-Encore.setOutputPath("./public/assets");
+Encore.setOutputPath('./public/assets');
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ Encore.setOutputPath("./public/assets");
 | relative from the "public" directory.
 |
 */
-Encore.setPublicPath("/assets");
+Encore.setPublicPath('/assets');
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ Encore.setPublicPath("/assets");
 | entrypoints.
 |
 */
-Encore.addEntry("app", "./resources/js/app.js");
+Encore.addEntry('app', './resources/js/app.js');
 
 /*
 |--------------------------------------------------------------------------
@@ -142,7 +142,7 @@ Encore.configureDevServerOptions((options) => {
    */
   options.liveReload = true;
   options.static.push({
-    directory: join(__dirname, "./resources/views"),
+    directory: join(__dirname, './resources/views'),
     watch: true,
   });
 });
@@ -160,9 +160,6 @@ Encore.configureDevServerOptions((options) => {
 // Encore.enableLessLoader()
 // Encore.enableStylusLoader()
 
-Encore.enableBabelTypeScriptPreset();
-Encore.enableReactPreset();
-
 /*
 |--------------------------------------------------------------------------
 | CSS loaders
@@ -172,8 +169,10 @@ Encore.enableReactPreset();
 | PostCSS or CSS.
 |
 */
-// Encore.enablePostCssLoader()
-// Encore.configureCssLoader(() => {})
+Encore.configureCssLoader((config) => {
+  config.modules = false; // Disable CSS modules (optional)
+});
+Encore.enablePostCssLoader();
 
 /*
 |--------------------------------------------------------------------------
@@ -202,9 +201,9 @@ Encore.enableReactPreset();
 */
 const config = Encore.getWebpackConfig();
 config.infrastructureLogging = {
-  level: "warn",
+  level: 'warn',
 };
-config.stats = "errors-warnings";
+config.stats = 'errors-warnings';
 
 /*
 |--------------------------------------------------------------------------
@@ -214,4 +213,6 @@ config.stats = "errors-warnings";
 | Export config for webpack to do its job
 |
 */
+Encore.enableReactPreset();
+
 module.exports = config;

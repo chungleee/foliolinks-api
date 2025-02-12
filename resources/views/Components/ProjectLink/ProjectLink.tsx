@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { Project } from '@prisma/client';
-import './ProjectLink.css';
 
 interface ProjectLinkProp {
   project: Project;
