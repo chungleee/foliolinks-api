@@ -87,6 +87,8 @@ Route.group(() => {
   .prefix('/api/apikey')
   .middleware('supabaseAuth');
 
+Route.get('/:username', 'UsersController.getUsername');
+
 Route.get('/ping', async () => {
   return { ping: 'pinged' };
 });

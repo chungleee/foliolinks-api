@@ -1,0 +1,30 @@
+.button {
+  width: 100%;
+  min-height: 46px;
+  border-style: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.project-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--black);
+  color: var(--white);
+  font-weight: 400;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-transform: capitalize;
+  width: 100%;
+  min-height: 46px;
+  border-style: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.project-button * {
+  color: var(--white);
+}

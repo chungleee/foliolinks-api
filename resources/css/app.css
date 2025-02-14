@@ -1,0 +1,31 @@
+@import '../../node_modules/modern-normalize/modern-normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;700&display=swap');
+@import '../views/Components/ProjectLink/ProjectLink.css';
+@import '../views/Pages/Username.css';
+
+:root {
+  --purple: #633cff;
+  --purple-hover: #beadff;
+  --purple-light: #efebff;
+
+  --white: #ffffff;
+
+  --grey: #737373;
+  --dark-grey: #333333;
+  --med-grey: #d9d9d9;
+  --light-grey: #fafafa;
+
+  --black: #1a1a1a;
+
+  --red: #ff3939;
+
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1440px;
+}
+
+html,
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  line-height: 150%;
+  color: var(--dark-grey);
+}
