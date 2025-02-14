@@ -4,7 +4,7 @@
 
 Frontend repo can be found here:
 
-https://github.com/chungleee/portfolio-links
+https://github.com/chungleee/foliolinks-web
 
 ## User Stories
 
