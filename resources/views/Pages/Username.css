@@ -41,13 +41,17 @@
 
 .preview__user-bio-description h4 {
   font-weight: 400;
+  color: var(--grey);
 }
 
 .preview__user-projects ul {
-  padding: 0;
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
   row-gap: 1rem;
+  width: 75%;
 }
 
 .preview__user-projects a {
@@ -55,7 +59,7 @@
   min-height: 50px;
 }
 
-@media (min-width: var(--breakpoint-tablet)) {
+@media (min-width: 768px) {
   .preview {
     background-color: var(--light-grey);
   }
@@ -88,7 +92,11 @@
     min-width: 350px;
     position: absolute;
     padding: 2rem 3rem;
-    top: 50%;
+    top: 45%;
     transform: translate(-50%, -50%);
+  }
+
+  .preview__user-projects ul {
+    width: auto;
   }
 }

@@ -11,6 +11,7 @@ const Username = ({ userProfile, projects }: UsernameProps) => {
 
   return (
     <div className="preview">
+      <div className="preview__nav-container"></div>
       <main className="preview__main">
         <section className="preview__user-bio">
           <div className="preview__user-bio-avatar">
