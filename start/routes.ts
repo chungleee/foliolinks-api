@@ -89,6 +89,6 @@ Route.group(() => {
 
 Route.get('/:username', 'UsersController.getUsername');
 
-Route.get('/ping', async () => {
+Route.get('/api/ping', async () => {
   return { ping: 'pinged' };
 });
