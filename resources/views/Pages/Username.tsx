@@ -11,26 +11,27 @@ const Username = ({ userProfile, projects }: UsernameProps) => {
 
   return (
     <div className="preview">
-      <div className="preview__nav-container"></div>
-      <main className="preview__main">
-        <section className="preview__user-bio">
-          <div className="preview__user-bio-avatar">
-            <img alt="avatar" />
-          </div>
-          <div className="preview__user-bio-description">
-            <h4>{`${email}`}</h4>
-            <h1>{`${firstName} ${lastName}`}</h1>
-          </div>
-        </section>
+      <div className="preview__nav-container">
+        <main className="preview__main">
+          <section className="preview__user-bio">
+            <div className="preview__user-bio-avatar">
+              <img alt="avatar" />
+            </div>
+            <div className="preview__user-bio-description">
+              <h4>{`${email}`}</h4>
+              <h1>{`${firstName} ${lastName}`}</h1>
+            </div>
+          </section>
 
-        <section className="preview__user-projects">
-          <ul>
-            {projects?.map((project) => {
-              return <ProjectLink key={project.id} project={project} />;
-            })}
-          </ul>
-        </section>
-      </main>
+          <section className="preview__user-projects">
+            <ul>
+              {projects?.map((project) => {
+                return <ProjectLink key={project.id} project={project} />;
+              })}
+            </ul>
+          </section>
+        </main>
+      </div>
     </div>
   );
 };
