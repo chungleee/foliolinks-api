@@ -10,6 +10,7 @@
 */
 
 import Server from '@ioc:Adonis/Core/Server';
+import VerifyMembership from '../app/Middleware/VerifyMembership';
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,5 @@ Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')]);
 */
 Server.middleware.registerNamed({
   supabaseAuth: () => import('../app/Middleware/SupabaseAuth'),
+  verifyMembership: () => import('../app/Middleware/VerifyMembership'),
 });

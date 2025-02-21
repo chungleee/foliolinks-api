@@ -7,6 +7,7 @@ export default class ApikeysController {
   public async generateApiKey({ request }) {
     const user = request.authenticatedUser;
 
+    console.log('user: ', user);
     // check if user already has api key
     const found = await prisma.apiKey.findUnique({
       where: {
