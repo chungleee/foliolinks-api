@@ -6,21 +6,25 @@ export default class VerifyMembership {
     { request, response }: HttpContextContract,
     next: () => Promise<void>
   ) {
-    // code for middleware goes here. ABOVE THE NEXT CALL
     const { authenticatedUser } = request;
 
-    const user = await prisma.userProfile.findUnique({
+    const userProfile = await prisma.userProfile.findUnique({
       where: {
         user_id: authenticatedUser?.id,
       },
     });
 
-    if (!user) {
+    console.log('user: ', userProfile);
+
+    if (!userProfile) {
       response.unauthorized({ error: 'Please create a profile first' });
       return;
     }
 
-    console.log('found user: ', user);
+    if (userProfile.membership !== 'PRO') {
+      response.unauthorized({ error: 'You need PRO tier membership' });
+      return;
+    }
 
     await next();
   }
