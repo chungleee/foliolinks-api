@@ -10,7 +10,7 @@ declare module '@ioc:Adonis/Core/Request' {
 
 export default class SupabaseAuth {
   public async handle(
-    { request }: HttpContextContract,
+    { request, response }: HttpContextContract,
     next: () => Promise<void>
   ) {
     const bearerToken = request.header('authorization');
@@ -27,7 +27,11 @@ export default class SupabaseAuth {
     } = await supabase.auth.getUser(access_token);
 
     if (error) {
-      throw error;
+      response.unauthorized({
+        error,
+      });
+
+      return;
     }
 
     request.authenticatedUser = user;

@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import prisma from '../../prisma/prisma';
 
-export default class VerifyMembership {
+export default class ApikeysAuth {
   public async handle(
     { request, response }: HttpContextContract,
     next: () => Promise<void>
@@ -14,8 +14,6 @@ export default class VerifyMembership {
       },
     });
 
-    console.log('user: ', userProfile);
-
     if (!userProfile) {
       response.unauthorized({ error: 'Please create a profile first' });
       return;
@@ -25,7 +23,6 @@ export default class VerifyMembership {
       response.unauthorized({ error: 'You need PRO tier membership' });
       return;
     }
-
     await next();
   }
 }

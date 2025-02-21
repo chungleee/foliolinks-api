@@ -1,17 +1,16 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { string } from '@ioc:Adonis/Core/Helpers';
 import Hash from '@ioc:Adonis/Core/Hash';
 import prisma from '../../../prisma/prisma';
 
 export default class ApikeysController {
-  public async generateApiKey({ request }) {
+  public async generateApiKey({ request }: HttpContextContract) {
     const user = request.authenticatedUser;
 
-    console.log('user: ', user);
     // check if user already has api key
     const found = await prisma.apiKey.findUnique({
       where: {
-        user_id: user.id,
+        user_id: user?.id,
       },
     });
 
@@ -26,7 +25,7 @@ export default class ApikeysController {
     const hashedKey = await Hash.make(key);
 
     const newApiKeyData = {
-      user_id: user.id,
+      user_id: user?.id,
       key: hashedKey,
       scope: 'readonly',
     };
@@ -37,33 +36,41 @@ export default class ApikeysController {
 
     return {
       hashedKey,
-      user,
       result,
     };
   }
 
-  public async revokeApiKey({ request }) {
+  public async revokeApiKey({ request, response }: HttpContextContract) {
     const user = request.authenticatedUser;
 
-    const result = await prisma.apiKey.update({
+    // check if api key exists
+    const foundApikey = await prisma.apiKey.findUnique({
       where: {
-        user_id: user.id,
+        user_id: user?.id,
+      },
+    });
+
+    if (!foundApikey) {
+      return response.notFound({ error: 'API key does not exist' });
+    }
+
+    if (foundApikey.isRevoked) {
+      return response.status(200).json({
+        message: 'API key already revoked',
+      });
+    }
+
+    await prisma.apiKey.update({
+      where: {
+        user_id: user?.id,
       },
       data: {
         isRevoked: true,
       },
     });
 
-    if (result) {
-      return {
-        success: true,
-        message: 'Api key successfully revoked.',
-      };
-    } else {
-      return {
-        success: false,
-        message: 'Something went wrong.',
-      };
-    }
+    return response.accepted({
+      message: 'API key successfully revoked',
+    });
   }
 }

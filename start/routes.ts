@@ -85,7 +85,7 @@ Route.group(() => {
   Route.post('/revoke-api-key', 'ApikeysController.revokeApiKey');
 })
   .prefix('/api/apikey')
-  .middleware(['supabaseAuth', 'verifyMembership']);
+  .middleware(['supabaseAuth', 'apikeysAuth']);
 
 Route.get('/:username', 'UsersController.getUsername');
 
