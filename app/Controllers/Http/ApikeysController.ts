@@ -10,7 +10,7 @@ export default class ApikeysController {
     // check if user already has api key
     const found = await prisma.apiKey.findUnique({
       where: {
-        user_id: user?.id,
+        user_id: user.id,
       },
     });
 
@@ -25,7 +25,7 @@ export default class ApikeysController {
     const hashedKey = await Hash.make(key);
 
     const newApiKeyData = {
-      user_id: user?.id,
+      user_id: user.id,
       key: hashedKey,
       scope: 'readonly',
     };

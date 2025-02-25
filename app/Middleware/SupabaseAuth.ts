@@ -26,7 +26,7 @@ export default class SupabaseAuth {
       error,
     } = await supabase.auth.getUser(access_token);
 
-    if (error) {
+    if (!user || error) {
       response.unauthorized({
         error,
       });
