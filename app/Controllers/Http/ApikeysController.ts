@@ -21,8 +21,8 @@ export default class ApikeysController {
     }
 
     // create
-    const key = string.generateRandom(32);
-    const hashedKey = await Hash.make(key);
+    const plainKey = string.generateRandom(32);
+    const hashedKey = await Hash.make(plainKey);
 
     const newApiKeyData = {
       user_id: user.id,
@@ -35,7 +35,7 @@ export default class ApikeysController {
     });
 
     return {
-      hashedKey,
+      apiKey: plainKey,
       result,
     };
   }

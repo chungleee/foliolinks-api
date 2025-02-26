@@ -35,7 +35,10 @@ Route.group(() => {
       Route.get('/me', 'UserProfileController.getMyProfile');
     }).middleware('supabaseAuth');
 
-    Route.get('/:username', 'UserProfileController.getUserProfile');
+    Route.get('/', 'UserProfileController.getMyJSONProfile').middleware(
+      'apikeysAuth'
+    );
+    // Route.get('/:username', 'UserProfileController.getUserProfile');
   }).prefix('/profile');
 
   // ******************************************************************
