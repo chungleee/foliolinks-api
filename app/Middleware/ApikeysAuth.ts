@@ -1,28 +1,39 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import prisma from '../../prisma/prisma';
+import Encryption from '@ioc:Adonis/Core/Encryption';
+import { safeEqual } from '@ioc:Adonis/Core/Helpers';
 
 export default class ApikeysAuth {
   public async handle(
     { request, response }: HttpContextContract,
     next: () => Promise<void>
   ) {
-    const { authenticatedUser } = request;
+    const apikeyId = request.header('x-api-key-id');
+    const apikey = request.header('x-api-key');
 
-    const userProfile = await prisma.userProfile.findUnique({
+    if (!apikeyId || !apikey) {
+      return response.unauthorized({ error: 'Invalid API credentials' });
+    }
+
+    const encryptedKey = await prisma.apiKey.findUnique({
       where: {
-        user_id: authenticatedUser?.id,
+        id: apikeyId,
       },
     });
 
-    if (!userProfile) {
-      response.unauthorized({ error: 'Please create a profile first' });
-      return;
+    if (!encryptedKey || encryptedKey.isRevoked) {
+      return response.forbidden({ error: 'Invalid API credentials' });
     }
 
-    if (userProfile.membership !== 'PRO') {
-      response.unauthorized({ error: 'You need PRO tier membership' });
-      return;
+    const decryptedKey = Encryption.decrypt(encryptedKey.key);
+    const match = safeEqual(apikey, decryptedKey as String);
+
+    if (!match) {
+      return response.forbidden({ error: 'Invalid API credentials' });
     }
+
+    request.apikeyInfo = encryptedKey;
+
     await next();
   }
 }

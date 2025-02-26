@@ -117,17 +117,23 @@ export default class UserProfileController {
     return { data: userProfile };
   }
 
-  protected async getMyJSONProfile({ request }: HttpContextContract) {
-    // const user = request.authenticatedUser;
-    // const userProfile = await prisma.userProfile.findUnique({
-    //   where: {
-    //     user_id: user.id,
-    //   },
-    //   include: {
-    //     projects: true,
-    //   },
-    // });
-    // return { userProfile };
+  protected async getMyJSONProfile({ request, response }: HttpContextContract) {
+    const apikeyInfo = request.apikeyInfo;
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id: apikeyInfo.user_id,
+      },
+      include: {
+        projects: true,
+      },
+    });
+
+    if (!userProfile) {
+      return response.notFound({ error: 'Something went wrong.' });
+    }
+
+    return { userProfile };
   }
 
   async deleteUserProfile({ request }) {
