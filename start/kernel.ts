@@ -41,4 +41,5 @@ Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')]);
 Server.middleware.registerNamed({
   supabaseAuth: () => import('../app/Middleware/SupabaseAuth'),
   apikeysAuth: () => import('../app/Middleware/ApikeysAuth'),
+  verifyMembership: () => import('../app/Middleware/VerifyMembership'),
 });
