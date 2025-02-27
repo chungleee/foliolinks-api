@@ -1,7 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import prisma from '../../prisma/prisma';
-import Encryption from '@ioc:Adonis/Core/Encryption';
-import { safeEqual } from '@ioc:Adonis/Core/Helpers';
+import Hash from '@ioc:Adonis/Core/Hash';
 
 export default class ApikeysAuth {
   public async handle(
@@ -15,24 +14,23 @@ export default class ApikeysAuth {
       return response.unauthorized({ error: 'Invalid API credentials' });
     }
 
-    const encryptedKey = await prisma.apiKey.findUnique({
+    const hashedApikey = await prisma.apiKey.findUnique({
       where: {
         id: apikeyId,
       },
     });
 
-    if (!encryptedKey || encryptedKey.isRevoked) {
+    if (!hashedApikey || hashedApikey.isRevoked) {
       return response.forbidden({ error: 'Invalid API credentials' });
     }
 
-    const decryptedKey = Encryption.decrypt(encryptedKey.key);
-    const match = safeEqual(apikey, decryptedKey as String);
+    const match = await Hash.verify(hashedApikey.key, apikey);
 
     if (!match) {
       return response.forbidden({ error: 'Invalid API credentials' });
     }
 
-    request.apikeyInfo = encryptedKey;
+    request.apikeyInfo = hashedApikey;
 
     await next();
   }
