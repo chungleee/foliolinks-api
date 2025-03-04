@@ -2,10 +2,28 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { string } from '@ioc:Adonis/Core/Helpers';
 import prisma from '../../../prisma/prisma';
 import Hash from '@ioc:Adonis/Core/Hash';
+import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 
 export default class ApikeysController {
   public async generateApiKey({ request }: HttpContextContract) {
     const user = request.authenticatedUser;
+    const { domain } = request.body();
+
+    await validator.validate({
+      schema: schema.create({
+        domain: schema.string([
+          rules.url({
+            protocols: ['https'],
+          }),
+          rules.normalizeUrl({
+            stripWWW: true,
+          }),
+        ]),
+      }),
+      data: {
+        domain: domain,
+      },
+    });
 
     // check if user already has api key
     const found = await prisma.apiKey.findUnique({
@@ -28,6 +46,7 @@ export default class ApikeysController {
       user_id: user.id,
       key: hashedKey,
       scope: 'readonly',
+      domain,
     };
 
     const result = await prisma.apiKey.create({
