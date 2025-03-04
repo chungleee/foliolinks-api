@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { string } from '@ioc:Adonis/Core/Helpers';
 import prisma from '../../../prisma/prisma';
-import Hash from '@ioc:Adonis/Core/Hash';
+import Encryption from '@ioc:Adonis/Core/Encryption';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 
 export default class ApikeysController {
@@ -40,11 +40,11 @@ export default class ApikeysController {
 
     // create
     const plainKey = string.generateRandom(32);
-    const hashedKey = await Hash.make(plainKey);
+    const encryptedKey = Encryption.encrypt(plainKey);
 
     const newApiKeyData = {
       user_id: user.id,
-      key: hashedKey,
+      key: encryptedKey,
       scope: 'readonly',
       domain,
     };
