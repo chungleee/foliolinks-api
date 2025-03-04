@@ -5,7 +5,7 @@ import Encryption from '@ioc:Adonis/Core/Encryption';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 
 export default class ApikeysController {
-  public async generateApiKey({ request }: HttpContextContract) {
+  public async generateApiKey({ request, response }: HttpContextContract) {
     const user = request.authenticatedUser;
     const { domain } = request.body();
 
@@ -56,10 +56,10 @@ export default class ApikeysController {
       },
     });
 
-    return {
+    return response.json({
       apiKey: plainKey,
       apikeyId: result.id,
-    };
+    });
   }
 
   public async revokeApiKey({ request, response }: HttpContextContract) {
@@ -93,6 +93,30 @@ export default class ApikeysController {
 
     return response.accepted({
       message: 'API key successfully revoked',
+    });
+  }
+
+  public async getApiKey({ request, response }: HttpContextContract) {
+    const user = request.authenticatedUser;
+
+    const apikey = await prisma.apiKey.findUnique({
+      where: {
+        user_id: user.id,
+      },
+      select: {
+        key: true,
+        isRevoked: true,
+      },
+    });
+
+    if (!apikey || apikey?.isRevoked) {
+      return response.unauthorized({ error: 'Invalid API credentials' });
+    }
+
+    const apiKey = Encryption.decrypt(apikey.key);
+
+    return response.json({
+      apiKey,
     });
   }
 }
