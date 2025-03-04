@@ -35,7 +35,10 @@ Route.group(() => {
       Route.get('/me', 'UserProfileController.getMyProfile');
     }).middleware('supabaseAuth');
 
-    Route.get('/:username', 'UserProfileController.getUserProfile');
+    Route.get('/', 'UserProfileController.getMyJSONProfile').middleware(
+      'apikeysAuth'
+    );
+    // Route.get('/:username', 'UserProfileController.getUserProfile');
   }).prefix('/profile');
 
   // ******************************************************************
@@ -81,11 +84,12 @@ Route.group(() => {
  * PRIVATE POST /
  */
 Route.group(() => {
+  Route.get('/get-api-key', 'ApikeysController.getApiKey');
   Route.post('/generate-api-key', 'ApikeysController.generateApiKey');
   Route.post('/revoke-api-key', 'ApikeysController.revokeApiKey');
 })
   .prefix('/api/apikey')
-  .middleware('supabaseAuth');
+  .middleware(['supabaseAuth', 'verifyMembership']);
 
 Route.get('/:username', 'UsersController.getUsername');
 

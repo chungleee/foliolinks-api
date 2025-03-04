@@ -39,6 +39,7 @@ model ApiKey {
   key String @unique
   scope String?
   isRevoked Boolean @default(false)
+  domain  String @default("mydomain.com")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,17 +1,17 @@
-// import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import prisma from '../../../prisma/prisma'
-import { schema, rules, validator } from '@ioc:Adonis/Core/Validator'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import prisma from '../../../prisma/prisma';
+import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 
 const CreateUserProfileSchema = schema.create({
   username: schema.string(),
   firstName: schema.string(),
   lastName: schema.string(),
-})
+});
 
 export default class UserProfileController {
-  async create ({ request, response }) {
-    const { id, email } = request.authenticatedUser
-    const { username, firstName, lastName } = request.body()
+  async create({ request, response }) {
+    const { id, email } = request.authenticatedUser;
+    const { username, firstName, lastName } = request.body();
 
     await validator.validate({
       schema: schema.create({
@@ -22,20 +22,20 @@ export default class UserProfileController {
         id,
         email,
       },
-    })
+    });
 
-    await request.validate({ schema: CreateUserProfileSchema })
+    await request.validate({ schema: CreateUserProfileSchema });
 
     const userProfileExists = await prisma.userProfile.findUnique({
       where: {
         user_id: id,
       },
-    })
+    });
 
     if (userProfileExists) {
       return response.status(400).json({
         error: 'User profile already exists',
-      })
+      });
     }
 
     const data = {
@@ -44,7 +44,7 @@ export default class UserProfileController {
       username,
       firstName,
       lastName,
-    }
+    };
 
     const newUserProfile = await prisma.userProfile.create({
       data,
@@ -55,13 +55,13 @@ export default class UserProfileController {
         email: true,
         membership: true,
       },
-    })
+    });
 
-    return { data: newUserProfile }
+    return { data: newUserProfile };
   }
 
-  async getUserProfile ({ request }) {
-    const { username } = request.params()
+  async getUserProfile({ request }) {
+    const { username } = request.params();
 
     await validator.validate({
       schema: schema.create({
@@ -70,7 +70,7 @@ export default class UserProfileController {
       data: {
         username,
       },
-    })
+    });
 
     const userProfile = await prisma.userProfile.findUnique({
       where: {
@@ -83,13 +83,13 @@ export default class UserProfileController {
         email: true,
         membership: true,
       },
-    })
+    });
 
-    return { data: userProfile }
+    return { data: userProfile };
   }
 
-  protected async getMyProfile ({ request }) {
-    const auth_user_id = request.authenticatedUser.id
+  protected async getMyProfile({ request }) {
+    const auth_user_id = request.authenticatedUser.id;
 
     await validator.validate({
       schema: schema.create({
@@ -98,7 +98,7 @@ export default class UserProfileController {
       data: {
         auth_user_id,
       },
-    })
+    });
 
     const userProfile = await prisma.userProfile.findUnique({
       where: {
@@ -112,14 +112,33 @@ export default class UserProfileController {
         email: true,
         membership: true,
       },
-    })
+    });
 
-    return { data: userProfile }
+    return { data: userProfile };
   }
 
-  async deleteUserProfile ({ request }) {
-    const { username } = request.params()
-    const auth_user_id = request.authenticatedUser.id
+  protected async getMyJSONProfile({ request, response }: HttpContextContract) {
+    const apikeyInfo = request.apikeyInfo;
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id: apikeyInfo.user_id,
+      },
+      include: {
+        projects: true,
+      },
+    });
+
+    if (!userProfile) {
+      return response.notFound({ error: 'Something went wrong.' });
+    }
+
+    return { userProfile };
+  }
+
+  async deleteUserProfile({ request }) {
+    const { username } = request.params();
+    const auth_user_id = request.authenticatedUser.id;
 
     await validator.validate({
       schema: schema.create({
@@ -130,20 +149,20 @@ export default class UserProfileController {
         username,
         auth_user_id,
       },
-    })
+    });
 
     await prisma.userProfile.findUnique({
       where: {
         user_id: auth_user_id,
       },
-    })
+    });
 
     const deletedUserProfile = await prisma.userProfile.delete({
       where: {
         username,
       },
-    })
+    });
 
-    return { data: deletedUserProfile }
+    return { data: deletedUserProfile };
   }
 }
