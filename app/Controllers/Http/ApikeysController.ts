@@ -32,34 +32,57 @@ export default class ApikeysController {
       },
     });
 
-    if (found) {
-      return {
-        message: 'Api key already exists',
-      };
-    }
-
     // create
     const plainKey = string.generateRandom(32);
     const encryptedKey = Encryption.encrypt(plainKey);
 
-    const newApiKeyData = {
-      user_id: user.id,
-      key: encryptedKey,
-      scope: 'readonly',
-      domain,
-    };
+    if (found && found.isRevoked) {
+      const result = await prisma.apiKey.update({
+        where: {
+          id: found.id,
+        },
+        data: {
+          key: encryptedKey,
+          isRevoked: false,
+          domain,
+        },
+        select: {
+          id: true,
+          domain: true,
+        },
+      });
 
-    const result = await prisma.apiKey.create({
-      data: newApiKeyData,
-      select: {
-        id: true,
-      },
-    });
+      return response.json({
+        apiKey: plainKey,
+        apikeyId: result.id,
+        domain,
+      });
+    } else if (!found) {
+      const newApiKeyData = {
+        user_id: user.id,
+        key: encryptedKey,
+        scope: 'readonly',
+        domain,
+      };
 
-    return response.json({
-      apiKey: plainKey,
-      apikeyId: result.id,
-    });
+      const result = await prisma.apiKey.create({
+        data: newApiKeyData,
+        select: {
+          id: true,
+          domain: true,
+        },
+      });
+
+      return response.json({
+        apiKey: plainKey,
+        apikeyId: result.id,
+        domain,
+      });
+    } else {
+      return response.forbidden({
+        message: 'Api key already exists',
+      });
+    }
   }
 
   public async revokeApiKey({ request, response }: HttpContextContract) {
@@ -104,8 +127,10 @@ export default class ApikeysController {
         user_id: user.id,
       },
       select: {
+        id: true,
         key: true,
         isRevoked: true,
+        domain: true,
       },
     });
 
@@ -113,10 +138,12 @@ export default class ApikeysController {
       return response.unauthorized({ error: 'Invalid API credentials' });
     }
 
-    const apiKey = Encryption.decrypt(apikey.key);
+    const decryptedApikey = Encryption.decrypt(apikey.key);
 
     return response.json({
-      apiKey,
+      ...apikey,
+      apiKey: decryptedApikey,
+      apikeyId: apikey.id,
     });
   }
 }
