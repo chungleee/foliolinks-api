@@ -80,7 +80,7 @@ export default class ApikeysController {
       });
     } else {
       return response.forbidden({
-        message: 'Api key already exists',
+        error: 'Api key already exists',
       });
     }
   }
