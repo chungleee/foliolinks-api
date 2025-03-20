@@ -170,6 +170,8 @@ export default class AuthController {
         return [userProfile, userProjectsCount, userApiKey];
       });
 
+    response.clearCookie('foliolinks_auth_refresh_token');
+
     return response.ok({
       message: 'Account successfully deleted',
     });
