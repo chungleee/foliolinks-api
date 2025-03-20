@@ -1,4 +1,4 @@
-// import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import Env from '@ioc:Adonis/Core/Env';
 import { supabase } from '../../../config/supabase_config';
 import { schema, rules } from '@ioc:Adonis/Core/Validator';
@@ -52,7 +52,7 @@ export default class AuthController {
     });
 
     if (error) {
-      response.send(error);
+      return response.send(error);
     }
 
     const { session, user } = data;
@@ -126,5 +126,52 @@ export default class AuthController {
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
     return { access_token };
+  }
+
+  public async deleteAccount({ request, response }: HttpContextContract) {
+    const user = request.authenticatedUser;
+    const { id: userId } = user;
+
+    const { data: userData, error: supabaseError } =
+      await supabase.auth.admin.deleteUser(userId);
+
+    if (supabaseError) {
+      return response.badRequest({ supabaseError });
+    }
+
+    if (Object.keys(userData.user).length) {
+      return response.badGateway({
+        error: 'Account deletion went wrong',
+        user: userData.user.id,
+      });
+    }
+
+    const [userProfile, userProjectsCount, userApiKey] =
+      await prisma.$transaction(async (tx) => {
+        const userProjectsCount = await tx.project.deleteMany({
+          where: { user_id: userId },
+        });
+
+        const userProfile = await tx.userProfile.findUnique({
+          where: { user_id: userId },
+        });
+
+        if (userProfile) {
+          await tx.userProfile.delete({ where: { user_id: userId } });
+        }
+
+        const userApiKey = await tx.apiKey.findUnique({
+          where: { user_id: userId },
+        });
+        if (userApiKey) {
+          await tx.apiKey.delete({ where: { user_id: userId } });
+        }
+
+        return [userProfile, userProjectsCount, userApiKey];
+      });
+
+    return response.ok({
+      message: 'Account successfully deleted',
+    });
   }
 }

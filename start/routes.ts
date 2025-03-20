@@ -54,6 +54,9 @@ Route.group(() => {
     Route.post('/login', 'AuthController.login');
     Route.post('/refresh', 'AuthController.refresh');
     Route.post('/logout', 'AuthController.logout').middleware('supabaseAuth');
+    Route.post('/delete-account', 'AuthController.deleteAccount').middleware(
+      'supabaseAuth'
+    );
   }).prefix('/auth');
 
   // ******************************************************************
