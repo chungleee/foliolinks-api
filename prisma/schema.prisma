@@ -13,9 +13,9 @@ datasource db {
 model UserProfile {
   id  BigInt @id @default(autoincrement())
   user_id String @unique 
-  username String @unique  
-  firstName String 
-  lastName String 
+  username String @unique @default("")
+  firstName String @default("")
+  lastName String @default("")
   email String @unique @default("") 
   projects Project[]
   membership MembershipTier @default(BASIC)
