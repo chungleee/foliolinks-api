@@ -25,12 +25,23 @@ export default class AuthController {
     });
 
     if (error) {
-      response.send(error);
+      return response.send(error);
     }
 
     const { session, user } = data;
+
+    if (!session || !user) {
+      return response.badRequest({ error: 'Sign up failed' });
+    }
     const access_token = session?.access_token;
     const refresh_token = session?.refresh_token;
+
+    await prisma.userProfile.create({
+      data: {
+        user_id: user?.id,
+        email: data.user?.email,
+      },
+    });
 
     const userData = {
       id: user?.id,
