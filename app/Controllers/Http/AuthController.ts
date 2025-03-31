@@ -7,6 +7,7 @@ import prisma from '../../../prisma/prisma';
 const newRegisterSchema = schema.create({
   email: schema.string([rules.email(), rules.trim()]),
   password: schema.string([rules.minLength(8)]),
+  username: schema.string([rules.trim(), rules.minLength(2)]),
 });
 
 const loginSchema = schema.create({
@@ -15,29 +16,49 @@ const loginSchema = schema.create({
 });
 
 export default class AuthController {
-  public async register({ request, response }) {
-    const { email, password } = request.body();
+  public async register({ request, response }: HttpContextContract) {
+    const { email, password, username } = request.body();
     await request.validate({ schema: newRegisterSchema });
 
-    const { data, error } = await supabase.auth.signUp({
+    const usernameExists = await prisma.userProfile.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (usernameExists) {
+      return response.notAcceptable({
+        error: 'Username already taken',
+        errorCode: 'USERNAME_TAKEN',
+      });
+    }
+
+    const { data, error: supabaseSignupError } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (error) {
-      return response.send(error);
+    if (supabaseSignupError) {
+      return response.badRequest({
+        error: supabaseSignupError.message,
+        errorCode: supabaseSignupError.name,
+      });
     }
 
     const { session, user } = data;
 
     if (!session || !user) {
-      return response.badRequest({ error: 'Sign up failed' });
+      return response.badRequest({
+        error: 'Sign up failed',
+        errorCode: 'SIGNUP_FAILED',
+      });
     }
     const access_token = session?.access_token;
     const refresh_token = session?.refresh_token;
 
-    await prisma.userProfile.create({
+    const newUserProfile = await prisma.userProfile.create({
       data: {
+        username,
         user_id: user?.id,
         email: data.user?.email,
       },
@@ -47,6 +68,7 @@ export default class AuthController {
       id: user?.id,
       email: user?.email,
       role: user?.role,
+      username: newUserProfile.username,
     };
 
     response.cookie('foliolinks_auth_refresh_token', refresh_token);
