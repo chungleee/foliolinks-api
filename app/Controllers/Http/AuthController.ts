@@ -15,6 +15,11 @@ const loginSchema = schema.create({
   password: schema.string([rules.minLength(1)]),
 });
 
+const refreshTokenCookieName =
+  Env.get('NODE_ENV') === 'production'
+    ? 'foliolinks_prod_auth_refresh_token'
+    : 'foliolinks_dev_auth_refresh_token';
+
 export default class AuthController {
   public async register({ request, response }: HttpContextContract) {
     const { email, password, username } = request.body();
@@ -71,7 +76,7 @@ export default class AuthController {
       username: newUserProfile.username,
     };
 
-    response.cookie('foliolinks_auth_refresh_token', refresh_token);
+    response.cookie(refreshTokenCookieName, refresh_token);
     return { user: userData, access_token };
   }
 
@@ -116,7 +121,7 @@ export default class AuthController {
       userProfile,
     };
 
-    response.cookie('foliolinks_auth_refresh_token', refresh_token, {
+    response.cookie(refreshTokenCookieName, refresh_token, {
       maxAge: '30d',
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
@@ -138,7 +143,7 @@ export default class AuthController {
   }
 
   public async refresh({ request, response }) {
-    const refresh_token = request.cookie('foliolinks_auth_refresh_token');
+    const refresh_token = request.cookie(refreshTokenCookieName);
 
     const { data, error } = await supabase.auth.refreshSession({
       refresh_token,
@@ -153,7 +158,7 @@ export default class AuthController {
     const access_token = session?.access_token;
     const new_refresh_token = session?.refresh_token;
 
-    response.cookie('foliolinks_auth_refresh_token', new_refresh_token, {
+    response.cookie(refreshTokenCookieName, new_refresh_token, {
       maxAge: '30d',
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
@@ -203,7 +208,7 @@ export default class AuthController {
         return [userProfile, userProjectsCount, userApiKey];
       });
 
-    response.clearCookie('foliolinks_auth_refresh_token');
+    response.clearCookie('refreshTokenCookieName');
 
     return response.ok({
       message: 'Account successfully deleted',
