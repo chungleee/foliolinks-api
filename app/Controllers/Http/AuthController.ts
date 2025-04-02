@@ -151,6 +151,7 @@ export default class AuthController {
 
     if (error) {
       response.send(error);
+      throw new AuthException(error.name, undefined, error.message);
     }
 
     const { session } = data;
@@ -163,7 +164,8 @@ export default class AuthController {
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
-    return { access_token };
+
+    return response.ok({ access_token });
   }
 
   public async deleteAccount({ request, response }: HttpContextContract) {
@@ -174,7 +176,12 @@ export default class AuthController {
       await supabase.auth.admin.deleteUser(userId);
 
     if (supabaseError) {
-      return response.badRequest({ supabaseError });
+      response.badRequest({ supabaseError });
+      throw new AuthException(
+        supabaseError.name,
+        undefined,
+        supabaseError.message
+      );
     }
 
     if (Object.keys(userData.user).length) {
