@@ -3,6 +3,7 @@ import Env from '@ioc:Adonis/Core/Env';
 import { supabase } from '../../../config/supabase_config';
 import { schema, rules } from '@ioc:Adonis/Core/Validator';
 import prisma from '../../../prisma/prisma';
+import AuthException, { AuthErrorCode } from '../../Exceptions/AuthException';
 
 const newRegisterSchema = schema.create({
   email: schema.string([rules.email(), rules.trim()]),
@@ -32,10 +33,7 @@ export default class AuthController {
     });
 
     if (usernameExists) {
-      return response.notAcceptable({
-        error: 'Username already taken',
-        errorCode: 'USERNAME_TAKEN',
-      });
+      throw new AuthException(AuthErrorCode.USERNAME_TAKEN);
     }
 
     const { data, error: supabaseSignupError } = await supabase.auth.signUp({
@@ -44,19 +42,17 @@ export default class AuthController {
     });
 
     if (supabaseSignupError) {
-      return response.badRequest({
-        error: supabaseSignupError.message,
-        errorCode: supabaseSignupError.name,
-      });
+      throw new AuthException(
+        supabaseSignupError.name,
+        undefined,
+        supabaseSignupError.message
+      );
     }
 
     const { session, user } = data;
 
     if (!session || !user) {
-      return response.badRequest({
-        error: 'Sign up failed',
-        errorCode: 'SIGNUP_FAILED',
-      });
+      throw new AuthException(AuthErrorCode.SIGNUP_FAILED);
     }
     const access_token = session?.access_token;
     const refresh_token = session?.refresh_token;
@@ -77,7 +73,8 @@ export default class AuthController {
     };
 
     response.cookie(refreshTokenCookieName, refresh_token);
-    return { user: userData, access_token };
+
+    return response.ok({ user: userData, access_token });
   }
 
   public async login({ request, response }) {
@@ -90,6 +87,7 @@ export default class AuthController {
     });
 
     if (error) {
+      throw new AuthException(error.name, undefined, error.message);
       return response.send(error);
     }
 
