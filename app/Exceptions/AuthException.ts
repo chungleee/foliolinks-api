@@ -17,6 +17,7 @@ export enum AuthErrorCode {
   USERNAME_TAKEN = 'USERNAME_TAKEN',
   SIGNUP_FAILED = 'SIGNUP_FAILED',
 }
+
 export default class AuthException extends Exception {
   private static messages: Record<AuthErrorCode, string> = {
     [AuthErrorCode.USERNAME_TAKEN]: 'Username already taken',

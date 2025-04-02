@@ -77,7 +77,7 @@ export default class AuthController {
     return response.ok({ user: userData, access_token });
   }
 
-  public async login({ request, response }) {
+  public async login({ request, response }: HttpContextContract) {
     const { email, password } = request.body();
     await request.validate({ schema: loginSchema });
 
@@ -88,7 +88,6 @@ export default class AuthController {
 
     if (error) {
       throw new AuthException(error.name, undefined, error.message);
-      return response.send(error);
     }
 
     const { session, user } = data;
@@ -124,10 +123,11 @@ export default class AuthController {
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
-    return { user: userData, access_token };
+
+    return response.ok({ user: userData, access_token });
   }
 
-  public async logout({ request }) {
+  public async logout({ request, response }: HttpContextContract) {
     const access_token = request.access_token;
     const { error } = await supabase.auth.signOut(access_token);
 
@@ -136,7 +136,9 @@ export default class AuthController {
     }
 
     if (!error) {
-      return { loggedOut: true };
+      return response.clearCookie(refreshTokenCookieName).ok({
+        loggedOut: true,
+      });
     }
   }
 
