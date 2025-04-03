@@ -149,6 +149,6 @@ export default class UserProfileController {
       },
     });
 
-    return response.ok({ data: deletedUserProfile });
+    return response.accepted({ data: deletedUserProfile });
   }
 }

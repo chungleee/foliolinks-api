@@ -52,7 +52,7 @@ export default class ApikeysController {
         },
       });
 
-      return response.json({
+      return response.ok({
         apiKey: plainKey,
         apikeyId: result.id,
         domain,
@@ -73,7 +73,7 @@ export default class ApikeysController {
         },
       });
 
-      return response.json({
+      return response.ok({
         apiKey: plainKey,
         apikeyId: result.id,
         domain,
@@ -140,7 +140,7 @@ export default class ApikeysController {
 
     const decryptedApikey = Encryption.decrypt(apikey.key);
 
-    return response.json({
+    return response.ok({
       ...apikey,
       apiKey: decryptedApikey,
       apikeyId: apikey.id,
