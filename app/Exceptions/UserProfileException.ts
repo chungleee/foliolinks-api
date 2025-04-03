@@ -10,10 +10,10 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 | a status code and error code for every exception.
 |
 | @example
-| new ProjectException('message', 500, 'E_RUNTIME_EXCEPTION')
+| new UserProfileException('message', 500, 'E_RUNTIME_EXCEPTION')
 |
 */
-export default class ProjectException extends Exception {
+export default class UserProfileException extends Exception {
   public async handle(error: this, { response }: HttpContextContract) {
     return response
       .status(error.status)

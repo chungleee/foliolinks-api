@@ -3,6 +3,7 @@ import Env from '@ioc:Adonis/Core/Env';
 import { supabase } from '../../../config/supabase_config';
 import { schema, rules } from '@ioc:Adonis/Core/Validator';
 import prisma from '../../../prisma/prisma';
+import AuthException, { AuthErrorCode } from '../../Exceptions/AuthException';
 
 const newRegisterSchema = schema.create({
   email: schema.string([rules.email(), rules.trim()]),
@@ -32,10 +33,7 @@ export default class AuthController {
     });
 
     if (usernameExists) {
-      return response.notAcceptable({
-        error: 'Username already taken',
-        errorCode: 'USERNAME_TAKEN',
-      });
+      throw new AuthException(AuthErrorCode.USERNAME_TAKEN);
     }
 
     const { data, error: supabaseSignupError } = await supabase.auth.signUp({
@@ -44,19 +42,17 @@ export default class AuthController {
     });
 
     if (supabaseSignupError) {
-      return response.badRequest({
-        error: supabaseSignupError.message,
-        errorCode: supabaseSignupError.name,
-      });
+      throw new AuthException(
+        supabaseSignupError.name,
+        undefined,
+        supabaseSignupError.message
+      );
     }
 
     const { session, user } = data;
 
     if (!session || !user) {
-      return response.badRequest({
-        error: 'Sign up failed',
-        errorCode: 'SIGNUP_FAILED',
-      });
+      throw new AuthException(AuthErrorCode.SIGNUP_FAILED);
     }
     const access_token = session?.access_token;
     const refresh_token = session?.refresh_token;
@@ -77,10 +73,11 @@ export default class AuthController {
     };
 
     response.cookie(refreshTokenCookieName, refresh_token);
-    return { user: userData, access_token };
+
+    return response.ok({ user: userData, access_token });
   }
 
-  public async login({ request, response }) {
+  public async login({ request, response }: HttpContextContract) {
     const { email, password } = request.body();
     await request.validate({ schema: loginSchema });
 
@@ -90,7 +87,7 @@ export default class AuthController {
     });
 
     if (error) {
-      return response.send(error);
+      throw new AuthException(error.name, undefined, error.message);
     }
 
     const { session, user } = data;
@@ -126,10 +123,11 @@ export default class AuthController {
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
-    return { user: userData, access_token };
+
+    return response.ok({ user: userData, access_token });
   }
 
-  public async logout({ request }) {
+  public async logout({ request, response }: HttpContextContract) {
     const access_token = request.access_token;
     const { error } = await supabase.auth.signOut(access_token);
 
@@ -138,7 +136,9 @@ export default class AuthController {
     }
 
     if (!error) {
-      return { loggedOut: true };
+      return response.clearCookie(refreshTokenCookieName).ok({
+        loggedOut: true,
+      });
     }
   }
 
@@ -151,6 +151,7 @@ export default class AuthController {
 
     if (error) {
       response.send(error);
+      throw new AuthException(error.name, undefined, error.message);
     }
 
     const { session } = data;
@@ -163,7 +164,8 @@ export default class AuthController {
       secure: Env.get('NODE_ENV') === 'production' ? true : false,
       sameSite: Env.get('NODE_ENV') === 'production' ? 'none' : 'lax',
     });
-    return { access_token };
+
+    return response.ok({ access_token });
   }
 
   public async deleteAccount({ request, response }: HttpContextContract) {
@@ -174,7 +176,12 @@ export default class AuthController {
       await supabase.auth.admin.deleteUser(userId);
 
     if (supabaseError) {
-      return response.badRequest({ supabaseError });
+      response.badRequest({ supabaseError });
+      throw new AuthException(
+        supabaseError.name,
+        undefined,
+        supabaseError.message
+      );
     }
 
     if (Object.keys(userData.user).length) {
