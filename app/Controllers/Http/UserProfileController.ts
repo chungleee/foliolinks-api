@@ -1,9 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import prisma from '../../../prisma/prisma';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
+import UserProfileException from '../../Exceptions/UserProfileException';
 
 const CreateUserProfileSchema = schema.create({
-  username: schema.string(),
   firstName: schema.string(),
   lastName: schema.string(),
 });
@@ -11,7 +11,7 @@ const CreateUserProfileSchema = schema.create({
 export default class UserProfileController {
   async create({ request, response }: HttpContextContract) {
     const { id, email } = request.authenticatedUser;
-    const { username, firstName, lastName } = request.body();
+    const { firstName, lastName } = request.body();
 
     await validator.validate({
       schema: schema.create({
@@ -31,7 +31,6 @@ export default class UserProfileController {
         user_id: id,
       },
       data: {
-        username,
         firstName,
         lastName,
       },
@@ -75,7 +74,7 @@ export default class UserProfileController {
     return { data: userProfile };
   }
 
-  protected async getMyProfile({ request }) {
+  protected async getMyProfile({ request, response }: HttpContextContract) {
     const auth_user_id = request.authenticatedUser.id;
 
     await validator.validate({
@@ -101,7 +100,7 @@ export default class UserProfileController {
       },
     });
 
-    return { data: userProfile };
+    return response.ok({ data: userProfile });
   }
 
   protected async getMyJSONProfile({ request, response }: HttpContextContract) {
@@ -120,10 +119,10 @@ export default class UserProfileController {
       return response.notFound({ error: 'Something went wrong.' });
     }
 
-    return { userProfile };
+    return response.ok({ userProfile });
   }
 
-  async deleteUserProfile({ request }) {
+  async deleteUserProfile({ request, response }: HttpContextContract) {
     const { username } = request.params();
     const auth_user_id = request.authenticatedUser.id;
 
@@ -150,6 +149,6 @@ export default class UserProfileController {
       },
     });
 
-    return { data: deletedUserProfile };
+    return response.ok({ data: deletedUserProfile });
   }
 }
