@@ -39,20 +39,21 @@ export default class ProjectsController {
 
     await request.validate({ schema: newProjectsSchema });
 
-    // if more than 2, do not allow
-    let freeTierLimit;
+    const freeTierLimit = userProfile.membership === 'PRO' ? 3 : 1;
     const userProjectsCount = userProfile.projects.length;
+    const limitReached = freeTierLimit - userProjectsCount <= 0;
+    const availableSlots = freeTierLimit - userProjectsCount;
 
-    if (userProfile.membership === 'BASIC') {
-      freeTierLimit = 1;
-    }
-    if (userProfile.membership === 'PRO') {
-      freeTierLimit = 3;
-    }
-
-    // const limitRemainder = freeTierLimit - userProjectsCount
-    if (userProjectsCount >= freeTierLimit) {
+    if (limitReached) {
       const message = 'You have exceeded the number of projects allowed';
+      const status = 403;
+      const errorCode = 'FreeTierLimit';
+
+      throw new ProjectException(message, status, errorCode);
+    }
+
+    if (projects.length > availableSlots) {
+      const message = `You only have ${availableSlots} more project(s) allowed`;
       const status = 403;
       const errorCode = 'FreeTierLimit';
 
