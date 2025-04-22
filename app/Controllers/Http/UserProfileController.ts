@@ -1,7 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import fs from 'node:fs/promises';
 import prisma from '../../../prisma/prisma';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 import UserProfileException from '../../Exceptions/UserProfileException';
+import { supabase } from '../../../config/supabase_config';
 
 const CreateUserProfileSchema = schema.create({
   firstName: schema.string(),
@@ -12,6 +14,10 @@ export default class UserProfileController {
   async create({ request, response }: HttpContextContract) {
     const { id, email } = request.authenticatedUser;
     const { firstName, lastName } = request.body();
+    const profilePic = request.file('profilePic', {
+      extnames: ['jpg', 'jpeg', 'png'],
+      size: '2mb',
+    });
 
     await validator.validate({
       schema: schema.create({
@@ -25,6 +31,24 @@ export default class UserProfileController {
     });
 
     await request.validate({ schema: CreateUserProfileSchema });
+
+    let avatarPath;
+
+    if (profilePic?.isValid && profilePic.tmpPath) {
+      const fileBuffer = await fs.readFile(profilePic.tmpPath);
+      const { data, error } = await supabase.storage
+        .from('foliolinks-user-avatars')
+        .upload(`${email}/avatar.${profilePic.subtype}`, fileBuffer, {
+          cacheControl: '3600',
+        });
+
+      console.log('upload data: ', data);
+      console.log('upload error: ', error);
+
+      if (data) avatarPath = data.path;
+
+      await fs.unlink(profilePic.tmpPath);
+    }
 
     const updatedUserProfile = await prisma.userProfile.update({
       where: {
