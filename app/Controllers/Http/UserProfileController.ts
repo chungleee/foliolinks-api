@@ -2,7 +2,6 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import fs from 'node:fs/promises';
 import prisma from '../../../prisma/prisma';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
-import UserProfileException from '../../Exceptions/UserProfileException';
 import { supabase } from '../../../config/supabase_config';
 
 const CreateUserProfileSchema = schema.create({
@@ -15,7 +14,7 @@ export default class UserProfileController {
     const { id, email } = request.authenticatedUser;
     const { firstName, lastName } = request.body();
     const profilePic = request.file('profilePic', {
-      extnames: ['jpg', 'jpeg', 'png'],
+      extnames: ['jpg', 'jpeg', 'png', 'webp'],
       size: '2mb',
     });
 
@@ -32,7 +31,7 @@ export default class UserProfileController {
 
     await request.validate({ schema: CreateUserProfileSchema });
 
-    let avatarPath;
+    let avatarPath: string | null = null;
 
     if (profilePic?.isValid && profilePic.tmpPath) {
       const fileBuffer = await fs.readFile(profilePic.tmpPath);
@@ -41,9 +40,6 @@ export default class UserProfileController {
         .upload(`${email}/avatar.${profilePic.subtype}`, fileBuffer, {
           cacheControl: '3600',
         });
-
-      console.log('upload data: ', data);
-      console.log('upload error: ', error);
 
       if (data) avatarPath = data.path;
 
@@ -57,6 +53,7 @@ export default class UserProfileController {
       data: {
         firstName,
         lastName,
+        avatar: avatarPath,
       },
       select: {
         username: true,
@@ -64,6 +61,7 @@ export default class UserProfileController {
         lastName: true,
         email: true,
         membership: true,
+        avatar: true,
       },
     });
 
@@ -121,6 +119,7 @@ export default class UserProfileController {
         lastName: true,
         email: true,
         membership: true,
+        avatar: true,
       },
     });
 
