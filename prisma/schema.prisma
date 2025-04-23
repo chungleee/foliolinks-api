@@ -19,6 +19,7 @@ model UserProfile {
   email String @unique @default("") 
   projects Project[]
   membership MembershipTier @default(BASIC)
+  avatar String?
 
   @@unique([user_id, username])
 }

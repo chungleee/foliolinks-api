@@ -1,7 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import fs from 'node:fs/promises';
 import prisma from '../../../prisma/prisma';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
-import UserProfileException from '../../Exceptions/UserProfileException';
+import { supabase } from '../../../config/supabase_config';
+import { createId } from '@paralleldrive/cuid2';
 
 const CreateUserProfileSchema = schema.create({
   firstName: schema.string(),
@@ -12,6 +14,10 @@ export default class UserProfileController {
   async create({ request, response }: HttpContextContract) {
     const { id, email } = request.authenticatedUser;
     const { firstName, lastName } = request.body();
+    const profilePic = request.file('profilePic', {
+      extnames: ['jpg', 'jpeg', 'png', 'webp'],
+      size: '2mb',
+    });
 
     await validator.validate({
       schema: schema.create({
@@ -26,6 +32,36 @@ export default class UserProfileController {
 
     await request.validate({ schema: CreateUserProfileSchema });
 
+    let avatarPath: string | null = null;
+    let oldAvatarPath: string | null = null;
+
+    if (profilePic?.isValid && profilePic.tmpPath) {
+      const existingUserProfile = await prisma.userProfile.findUnique({
+        where: { user_id: id },
+        select: avatarPath,
+      });
+
+      oldAvatarPath = existingUserProfile?.avatar || null;
+
+      const cuid = createId();
+      const fileBuffer = await fs.readFile(profilePic.tmpPath);
+      const { data, error } = await supabase.storage
+        .from('foliolinks-user-avatars')
+        .upload(`${email}/${cuid}.${profilePic.subtype}`, fileBuffer, {
+          cacheControl: '3600',
+        });
+
+      if (data) avatarPath = data.path;
+
+      if (!error && oldAvatarPath) {
+        await supabase.storage
+          .from('foliolinks-user-avatars')
+          .remove([oldAvatarPath]);
+      }
+
+      await fs.unlink(profilePic.tmpPath);
+    }
+
     const updatedUserProfile = await prisma.userProfile.update({
       where: {
         user_id: id,
@@ -33,6 +69,7 @@ export default class UserProfileController {
       data: {
         firstName,
         lastName,
+        avatar: avatarPath,
       },
       select: {
         username: true,
@@ -40,6 +77,7 @@ export default class UserProfileController {
         lastName: true,
         email: true,
         membership: true,
+        avatar: true,
       },
     });
 
@@ -97,6 +135,7 @@ export default class UserProfileController {
         lastName: true,
         email: true,
         membership: true,
+        avatar: true,
       },
     });
 
