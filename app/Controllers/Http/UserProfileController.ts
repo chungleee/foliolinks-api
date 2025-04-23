@@ -34,6 +34,7 @@ export default class UserProfileController {
 
     let avatarPath: string | null = null;
     let oldAvatarPath: string | null = null;
+    let avatarPublicUrl: string | null = null;
 
     if (profilePic?.isValid && profilePic.tmpPath) {
       const existingUserProfile = await prisma.userProfile.findUnique({
@@ -50,6 +51,16 @@ export default class UserProfileController {
         .upload(`${email}/${cuid}.${profilePic.subtype}`, fileBuffer, {
           cacheControl: '3600',
         });
+
+      if (data) {
+        avatarPath = data.path;
+
+        const { data: avatarData } = supabase.storage
+          .from('foliolinks-user-avatars')
+          .getPublicUrl(avatarPath);
+
+        if (avatarData) avatarPublicUrl = avatarData.publicUrl;
+      }
 
       if (data) avatarPath = data.path;
 
@@ -81,7 +92,9 @@ export default class UserProfileController {
       },
     });
 
-    return response.ok({ data: updatedUserProfile });
+    return response.ok({
+      data: { ...updatedUserProfile, avatar: avatarPublicUrl },
+    });
   }
 
   async getUserProfile({ request }) {
@@ -139,7 +152,17 @@ export default class UserProfileController {
       },
     });
 
-    return response.ok({ data: userProfile });
+    let avatarPublicUrl: string | null = null;
+
+    if (userProfile?.avatar) {
+      const { data } = supabase.storage
+        .from('foliolinks-user-avatars')
+        .getPublicUrl(userProfile.avatar);
+
+      avatarPublicUrl = data.publicUrl;
+    }
+
+    return response.ok({ data: { ...userProfile, avatar: avatarPublicUrl } });
   }
 
   protected async getMyJSONProfile({ request, response }: HttpContextContract) {
