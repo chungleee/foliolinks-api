@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import prisma from '../../../prisma/prisma';
 import { schema, rules, validator } from '@ioc:Adonis/Core/Validator';
 import { supabase } from '../../../config/supabase_config';
+import { createId } from '@paralleldrive/cuid2';
 
 const CreateUserProfileSchema = schema.create({
   firstName: schema.string(),
@@ -32,16 +33,31 @@ export default class UserProfileController {
     await request.validate({ schema: CreateUserProfileSchema });
 
     let avatarPath: string | null = null;
+    let oldAvatarPath: string | null = null;
 
     if (profilePic?.isValid && profilePic.tmpPath) {
+      const existingUserProfile = await prisma.userProfile.findUnique({
+        where: { user_id: id },
+        select: avatarPath,
+      });
+
+      oldAvatarPath = existingUserProfile?.avatar || null;
+
+      const cuid = createId();
       const fileBuffer = await fs.readFile(profilePic.tmpPath);
       const { data, error } = await supabase.storage
         .from('foliolinks-user-avatars')
-        .upload(`${email}/avatar.${profilePic.subtype}`, fileBuffer, {
+        .upload(`${email}/${cuid}.${profilePic.subtype}`, fileBuffer, {
           cacheControl: '3600',
         });
 
       if (data) avatarPath = data.path;
+
+      if (!error && oldAvatarPath) {
+        await supabase.storage
+          .from('foliolinks-user-avatars')
+          .remove([oldAvatarPath]);
+      }
 
       await fs.unlink(profilePic.tmpPath);
     }

@@ -54,6 +54,7 @@
     "@adonisjs/repl": "^3.1.0",
     "@adonisjs/session": "^6.4.0",
     "@adonisjs/view": "^6.2.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "5.5.2",
     "@supabase/supabase-js": "^2.38.4",
     "@types/react": "^18.2.48",
