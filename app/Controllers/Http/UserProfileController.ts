@@ -49,7 +49,7 @@ export default class UserProfileController {
       const { data, error } = await supabase.storage
         .from('foliolinks-user-avatars')
         .upload(`${email}/${cuid}.${profilePic.subtype}`, fileBuffer, {
-          cacheControl: '3600',
+          cacheControl: '31536000',
         });
 
       if (data) {
