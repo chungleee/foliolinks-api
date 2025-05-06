@@ -35,6 +35,12 @@
   background-color: #e0e0e0;
 }
 
+.preview__user-bio-avatar img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
 .preview__user-bio-description h1 {
   text-transform: capitalize;
 }

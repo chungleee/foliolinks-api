@@ -7,7 +7,7 @@ interface UsernameProps {
 }
 
 const Username = ({ userProfile, projects }: UsernameProps) => {
-  const { email, firstName, lastName } = userProfile;
+  const { email, firstName, lastName, avatar } = userProfile;
 
   return (
     <div className="preview">
@@ -15,7 +15,7 @@ const Username = ({ userProfile, projects }: UsernameProps) => {
         <main className="preview__main">
           <section className="preview__user-bio">
             <div className="preview__user-bio-avatar">
-              <img alt="avatar" />
+              <img src={avatar ? avatar : undefined} alt="avatar" />
             </div>
             <div className="preview__user-bio-description">
               <h4>{`${email}`}</h4>
