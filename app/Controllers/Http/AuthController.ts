@@ -203,6 +203,17 @@ export default class AuthController {
 
         if (userProfile) {
           await tx.userProfile.delete({ where: { user_id: userId } });
+
+          if (userProfile.avatar) {
+            const { data: userStorageData, error: supabaseStorageError } =
+              await supabase.storage
+                .from('foliolinks-user-avatars')
+                .remove([userProfile.avatar]);
+
+            if (supabaseStorageError) {
+              console.error(supabaseStorageError);
+            }
+          }
         }
 
         const userApiKey = await tx.apiKey.findUnique({
