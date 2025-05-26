@@ -94,6 +94,18 @@ Route.group(() => {
   .prefix('/api/apikey')
   .middleware(['supabaseAuth', 'verifyMembership']);
 
+// ***************************
+// ROUTE /api/payment
+// PRIVATE
+Route.group(() => {
+  Route.post(
+    '/create-checkout-session',
+    'PaymentsController.createCheckoutSession'
+  );
+})
+  .prefix('/api/payment')
+  .middleware('supabaseAuth');
+
 Route.get('/:username', 'UsersController.getUsername');
 
 Route.get('/api/ping', async () => {
