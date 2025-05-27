@@ -10,7 +10,7 @@ export default class PaymentsController {
       ui_mode: 'custom',
       line_items: [
         {
-          price: '3.00',
+          price: 'price_1RTSnKE4dYWFu43eQGBTt6Vw',
           quantity: 1,
         },
       ],
