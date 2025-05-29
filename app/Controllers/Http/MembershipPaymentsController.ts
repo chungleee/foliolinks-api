@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { stripe } from '../../../config/stripe';
 
-export default class PaymentsController {
+export default class MembershipPaymentsController {
   public async createCheckoutSession({
     request,
     response,
@@ -15,11 +15,25 @@ export default class PaymentsController {
         },
       ],
       mode: 'subscription',
-      return_url: `http://localhost:3333/return?session_id{CHECKOUT_SESSION_ID}`,
     });
 
     response.ok({
       clientSecret: session.client_secret,
+      checkoutSessionId: session.id,
     });
+  }
+
+  public async removeCheckoutSession({
+    request,
+    response,
+  }: HttpContextContract) {
+    const sessionToExpire: string = request.body().sessionToExpire;
+    const session = await stripe.checkout.sessions.expire(sessionToExpire);
+
+    response.ok({ status: session.status });
+  }
+
+  public async upgradeMembership({ request, response }: HttpContextContract) {
+    // upgrade user membership
   }
 }

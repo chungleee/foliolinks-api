@@ -100,7 +100,12 @@ Route.group(() => {
 Route.group(() => {
   Route.post(
     '/create-checkout-session',
-    'PaymentsController.createCheckoutSession'
+    'MembershipPaymentsController.createCheckoutSession'
+  );
+
+  Route.post(
+    '/remove-checkout-session',
+    'MembershipPaymentsController.removeCheckoutSession'
   );
 })
   .prefix('/api/payment')
