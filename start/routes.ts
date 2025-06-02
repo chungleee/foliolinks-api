@@ -107,6 +107,11 @@ Route.group(() => {
     '/remove-checkout-session',
     'MembershipPaymentsController.removeCheckoutSession'
   );
+
+  Route.post(
+    '/upgrade-membership',
+    'MembershipPaymentsController.upgradeMembership'
+  );
 })
   .prefix('/api/payment')
   .middleware('supabaseAuth');

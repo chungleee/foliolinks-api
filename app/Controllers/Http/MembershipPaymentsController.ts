@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { stripe } from '../../../config/stripe';
+import prisma from '../../../prisma/prisma';
 
 export default class MembershipPaymentsController {
   public async createCheckoutSession({
@@ -34,6 +35,25 @@ export default class MembershipPaymentsController {
   }
 
   public async upgradeMembership({ request, response }: HttpContextContract) {
-    // upgrade user membership
+    const userId = request.authenticatedUser.id;
+    // const userId = request.body().userId;
+
+    const userProfile = await prisma.userProfile.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        membership: 'PRO',
+      },
+    });
+
+    if (!userProfile) {
+      return response.notFound({ error: 'Something went wrong' });
+    }
+
+    return response.ok({
+      type: 'success',
+      userProfile,
+    });
   }
 }
