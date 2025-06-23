@@ -7,6 +7,22 @@ export default class MembershipPaymentsController {
     request,
     response,
   }: HttpContextContract) {
+    const userId = request.authenticatedUser.id;
+
+    const userProfile = await prisma.userProfile.findUnique({
+      where: {
+        user_id: userId,
+      },
+    })
+
+    if (!userProfile) {
+      return response.notFound({ type: 'error', message: 'No user profile found.' });
+    }
+
+    if(userProfile.membership === 'PRO') {
+      return response.ok({type: 'success', message: 'Already a PRO member.'})
+    }
+
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'custom',
       line_items: [
@@ -15,7 +31,7 @@ export default class MembershipPaymentsController {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: 'subscription'
     });
 
     response.ok({
