@@ -116,6 +116,11 @@ Route.group(() => {
   .prefix('/api/payment')
   .middleware('supabaseAuth');
 
+Route.post(
+  '/stripe-subscription-webhook',
+  'MembershipPaymentsController.stripeSubscriptionWebhook'
+).prefix('/api/payment');
+
 Route.get('/:username', 'UsersController.getUsername');
 
 Route.get('/api/ping', async () => {

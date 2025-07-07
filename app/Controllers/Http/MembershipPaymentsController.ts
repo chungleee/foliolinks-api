@@ -13,14 +13,17 @@ export default class MembershipPaymentsController {
       where: {
         user_id: userId,
       },
-    })
+    });
 
     if (!userProfile) {
-      return response.notFound({ type: 'error', message: 'No user profile found.' });
+      return response.notFound({
+        type: 'error',
+        message: 'No user profile found.',
+      });
     }
 
-    if(userProfile.membership === 'PRO') {
-      return response.ok({type: 'success', message: 'Already a PRO member.'})
+    if (userProfile.membership === 'PRO') {
+      return response.ok({ type: 'success', message: 'Already a PRO member.' });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -31,7 +34,7 @@ export default class MembershipPaymentsController {
           quantity: 1,
         },
       ],
-      mode: 'subscription'
+      mode: 'subscription',
     });
 
     response.ok({
@@ -71,5 +74,56 @@ export default class MembershipPaymentsController {
       type: 'success',
       userProfile,
     });
+  }
+
+  public async stripeSubscriptionWebhook({
+    request,
+    response,
+  }: HttpContextContract) {
+    const endpointSecret =
+      'whsec_695f41fb4c398b31839e4a4af67a4053bba1817dec2f32ce3b8dd451b85f90a6';
+    let event;
+    const raw = request.raw();
+    console.log('raw: ', raw);
+
+    if (endpointSecret) {
+      const signature = request.header('stripe-signature');
+      try {
+        if (signature) {
+          event = stripe.webhooks.constructEvent(
+            raw as string,
+            signature,
+            endpointSecret
+          );
+        }
+
+        console.log('event: ', event);
+      } catch (err) {
+        console.log(`⚠️  Webhook signature verification failed.`, err.message);
+        return response.status(400);
+      }
+
+      // Handle the event
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          // Then define and call a method to handle the successful payment intent.
+          // handlePaymentIntentSucceeded(paymentIntent);
+          console.log('intent: ', paymentIntent);
+          break;
+        case 'payment_method.attached':
+          const paymentMethod = event.data.object;
+          // Then define and call a method to handle the successful attachment of a PaymentMethod.
+          // handlePaymentMethodAttached(paymentMethod);
+          console.log('method: ', paymentMethod);
+          break;
+        // ... handle other event types
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      // Return a response to acknowledge receipt of the event
+      response.json({ received: true });
+    }
   }
 }
