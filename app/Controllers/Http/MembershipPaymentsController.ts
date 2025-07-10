@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { stripe } from '../../../config/stripe';
 import prisma from '../../../prisma/prisma';
+import Stripe from 'stripe';
 
 export default class MembershipPaymentsController {
   public async createCheckoutSession({
@@ -55,7 +56,6 @@ export default class MembershipPaymentsController {
 
   public async upgradeMembership({ request, response }: HttpContextContract) {
     const userId = request.authenticatedUser.id;
-    // const userId = request.body().userId;
 
     const userProfile = await prisma.userProfile.update({
       where: {
@@ -84,8 +84,6 @@ export default class MembershipPaymentsController {
       'whsec_695f41fb4c398b31839e4a4af67a4053bba1817dec2f32ce3b8dd451b85f90a6';
     let event;
     const raw = request.raw();
-    console.log('raw: ', raw);
-
     if (endpointSecret) {
       const signature = request.header('stripe-signature');
       try {
@@ -96,8 +94,6 @@ export default class MembershipPaymentsController {
             endpointSecret
           );
         }
-
-        console.log('event: ', event);
       } catch (err) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message);
         return response.status(400);
@@ -105,21 +101,83 @@ export default class MembershipPaymentsController {
 
       // Handle the event
       switch (event.type) {
-        case 'payment_intent.succeeded':
-          const paymentIntent = event.data.object;
-          // Then define and call a method to handle the successful payment intent.
-          // handlePaymentIntentSucceeded(paymentIntent);
-          console.log('intent: ', paymentIntent);
-          break;
-        case 'payment_method.attached':
-          const paymentMethod = event.data.object;
-          // Then define and call a method to handle the successful attachment of a PaymentMethod.
-          // handlePaymentMethodAttached(paymentMethod);
-          console.log('method: ', paymentMethod);
-          break;
-        // ... handle other event types
-        default:
-          console.log(`Unhandled event type ${event.type}`);
+        case 'checkout.session.completed':
+          const session = event.data.object as Stripe.Checkout.Session;
+          const customerId = session.customer as string;
+          const customerEmail = session.customer_details?.email;
+
+          if (!customerId || !customerEmail) {
+            console.warn('Missing customer id or email in session');
+            return response.status(400);
+          }
+
+          const userProfile = await prisma.userProfile.findUnique({
+            where: {
+              email: customerEmail,
+            },
+          });
+
+          if (!userProfile) {
+            return response.notFound({ error: 'Something went wrong' });
+          }
+
+          const [existingStripeCustomer, existingMembershipRecord] =
+            await Promise.all([
+              prisma.stripeCustomer.findUnique({
+                where: { user_id: userProfile.user_id },
+              }),
+              prisma.membershipRecord.findUnique({
+                where: { user_id: userProfile.user_id },
+              }),
+            ]);
+
+          if (!existingStripeCustomer) {
+            const newStripeCustomer = await prisma.stripeCustomer.create({
+              data: {
+                user_id: userProfile.user_id,
+                stripe_customer_id: customerId,
+              },
+            });
+          }
+
+          if (!existingMembershipRecord) {
+            const newMembershipRecord = await prisma.membershipRecord.create({
+              data: {
+                user_id: userProfile.user_id,
+                stripe_customer_id: customerId,
+                subscription_status: 'ACTIVE',
+              },
+            });
+          } else if (
+            existingMembershipRecord.subscription_status !== 'ACTIVE'
+          ) {
+            await prisma.membershipRecord.update({
+              where: {
+                user_id: userProfile.user_id,
+              },
+              data: {
+                subscription_status: 'ACTIVE',
+              },
+            });
+          }
+
+        // case 'customer.subscription.created':
+        //   console.log('new subscription');
+        // case 'payment_intent.succeeded':
+        //   const paymentIntent = event.data.object;
+        //   // Then define and call a method to handle the successful payment intent.
+        //   // handlePaymentIntentSucceeded(paymentIntent);
+        //   console.log('intent: ', paymentIntent);
+        //   break;
+        // case 'payment_method.attached':
+        //   const paymentMethod = event.data.object;
+        //   // Then define and call a method to handle the successful attachment of a PaymentMethod.
+        //   // handlePaymentMethodAttached(paymentMethod);
+        //   console.log('method: ', paymentMethod);
+        //   break;
+        // // ... handle other event types
+        // default:
+        // console.log(`Unhandled event type ${event.type}`);
       }
 
       // Return a response to acknowledge receipt of the event
