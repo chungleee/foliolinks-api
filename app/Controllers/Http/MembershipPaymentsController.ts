@@ -104,6 +104,7 @@ export default class MembershipPaymentsController {
         case 'checkout.session.completed':
           const session = event.data.object as Stripe.Checkout.Session;
           const customerId = session.customer as string;
+          const subscriptionId = session.subscription as string;
           const customerEmail = session.customer_details?.email;
 
           if (!customerId || !customerEmail) {
@@ -145,6 +146,7 @@ export default class MembershipPaymentsController {
               data: {
                 user_id: userProfile.user_id,
                 stripe_customer_id: customerId,
+                subscription_id: subscriptionId,
                 subscription_status: 'ACTIVE',
               },
             });
@@ -160,9 +162,10 @@ export default class MembershipPaymentsController {
               },
             });
           }
-
-        // case 'customer.subscription.created':
-        //   console.log('new subscription');
+          break;
+        case 'customer.subscription.deleted':
+          console.log('subscription deleted: ', event.data.object);
+          break;
         // case 'payment_intent.succeeded':
         //   const paymentIntent = event.data.object;
         //   // Then define and call a method to handle the successful payment intent.
