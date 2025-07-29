@@ -76,6 +76,39 @@ export default class MembershipPaymentsController {
     });
   }
 
+  public async unsubscribe({ request, response }: HttpContextContract) {
+    const userId = request.authenticatedUser.id;
+    const membershipRecord = await prisma.membershipRecord.findUnique({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    if (!membershipRecord) {
+      return response.badRequest({
+        type: 'error',
+        message: 'Membership record not found',
+      });
+    }
+
+    const subscription = await stripe.subscriptions.cancel(
+      membershipRecord?.subscription_id as string
+    );
+
+    if (subscription.status === 'canceled') {
+      const updatedUserProfile = await prisma.userProfile.update({
+        where: {
+          user_id: userId,
+        },
+        data: {
+          membership: 'BASIC',
+        },
+      });
+
+      return response.ok({ type: 'success', updatedUserProfile });
+    }
+  }
+
   public async stripeSubscriptionWebhook({
     request,
     response,
@@ -112,7 +145,7 @@ export default class MembershipPaymentsController {
             return response.status(400);
           }
 
-          const userProfile = await prisma.userProfile.findUnique({
+          let userProfile = await prisma.userProfile.findUnique({
             where: {
               email: customerEmail,
             },
@@ -164,7 +197,43 @@ export default class MembershipPaymentsController {
           }
           break;
         case 'customer.subscription.deleted':
-          console.log('subscription deleted: ', event.data.object);
+          const subscription = event.data.object as Stripe.Subscription;
+          const deletedSubscriptionId = subscription.id;
+          const stripeCustomerId = subscription.customer as string;
+
+          const membershipRecord = await prisma.membershipRecord.update({
+            where: {
+              subscription_id: deletedSubscriptionId,
+              stripe_customer_id: stripeCustomerId,
+            },
+            data: {
+              subscription_status: 'INACTIVE',
+            },
+          });
+
+          const stripeCustomer = await prisma.stripeCustomer.findUnique({
+            where: {
+              stripe_customer_id: membershipRecord.stripe_customer_id,
+            },
+          });
+
+          if (!stripeCustomer) {
+            return response.badRequest({
+              type: 'error',
+              message: 'Stripe Customer record not found',
+            });
+          }
+
+          userProfile = await prisma.userProfile.update({
+            where: {
+              user_id: stripeCustomer.user_id,
+            },
+            data: {
+              membership: 'BASIC',
+            },
+          });
+
+          response.ok({ type: 'success' });
           break;
         // case 'payment_intent.succeeded':
         //   const paymentIntent = event.data.object;
@@ -179,8 +248,8 @@ export default class MembershipPaymentsController {
         //   console.log('method: ', paymentMethod);
         //   break;
         // // ... handle other event types
-        // default:
-        // console.log(`Unhandled event type ${event.type}`);
+        default:
+          console.log(`Unhandled event type ${event.type}`);
       }
 
       // Return a response to acknowledge receipt of the event

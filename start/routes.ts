@@ -112,6 +112,8 @@ Route.group(() => {
     '/upgrade-membership',
     'MembershipPaymentsController.upgradeMembership'
   );
+
+  Route.delete('/unsubscribe', 'MembershipPaymentsController.unsubscribe');
 })
   .prefix('/api/payment')
   .middleware('supabaseAuth');
