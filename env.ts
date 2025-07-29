@@ -12,7 +12,7 @@
 |
 */
 
-import Env from '@ioc:Adonis/Core/Env'
+import Env from '@ioc:Adonis/Core/Env';
 
 export default Env.rules({
   HOST: Env.schema.string({ format: 'host' }),
@@ -25,4 +25,5 @@ export default Env.rules({
   SUPABASE_KEY: Env.schema.string(),
   DATABASE_URL: Env.schema.string(),
   SESSION_DRIVER: Env.schema.string(),
-})
+  STRIPE_EVENTS_SECRET: Env.schema.string(),
+});

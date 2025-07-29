@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import Env from '@ioc:Adonis/Core/Env';
 import { stripe } from '../../../config/stripe';
 import prisma from '../../../prisma/prisma';
 import Stripe from 'stripe';
@@ -113,8 +114,7 @@ export default class MembershipPaymentsController {
     request,
     response,
   }: HttpContextContract) {
-    const endpointSecret =
-      'whsec_695f41fb4c398b31839e4a4af67a4053bba1817dec2f32ce3b8dd451b85f90a6';
+    const endpointSecret = Env.get('STRIPE_EVENTS_SECRET');
     let event;
     const raw = request.raw();
     if (endpointSecret) {
