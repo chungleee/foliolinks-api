@@ -94,6 +94,35 @@ Route.group(() => {
   .prefix('/api/apikey')
   .middleware(['supabaseAuth', 'verifyMembership']);
 
+// ***************************
+// ROUTE /api/payment
+// PRIVATE
+Route.group(() => {
+  Route.post(
+    '/create-checkout-session',
+    'MembershipPaymentsController.createCheckoutSession'
+  );
+
+  Route.post(
+    '/remove-checkout-session',
+    'MembershipPaymentsController.removeCheckoutSession'
+  );
+
+  Route.post(
+    '/upgrade-membership',
+    'MembershipPaymentsController.upgradeMembership'
+  );
+
+  Route.delete('/unsubscribe', 'MembershipPaymentsController.unsubscribe');
+})
+  .prefix('/api/payment')
+  .middleware('supabaseAuth');
+
+Route.post(
+  '/stripe-subscription-webhook',
+  'MembershipPaymentsController.stripeSubscriptionWebhook'
+).prefix('/api/payment');
+
 Route.get('/:username', 'UsersController.getUsername');
 
 Route.get('/api/ping', async () => {

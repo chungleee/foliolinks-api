@@ -11,38 +11,62 @@ datasource db {
 }
 
 model UserProfile {
-  id  BigInt @id @default(autoincrement())
-  user_id String @unique 
-  username String @unique @default("") @db.String(100)
-  firstName String @default("")
-  lastName String @default("")
-  email String @unique @default("") 
-  projects Project[]
+  id         BigInt         @id @default(autoincrement())
+  user_id    String         @unique
+  username   String         @unique @default("") @db.String(100)
+  firstName  String         @default("")
+  lastName   String         @default("")
+  email      String         @unique @default("")
+  projects   Project[]
   membership MembershipTier @default(BASIC)
-  avatar String?
+  avatar     String?
 
   @@unique([user_id, username])
 }
 
 model Project {
-  id  BigInt  @id @default(autoincrement())
-  user_id String
-  username String @db.String(100)
-  project_owner UserProfile @relation(fields: [user_id, username], references: [user_id, username])
-  project_name  String @db.String(255)
-  project_description  String? @db.String(2000)
-  project_url  String
+  id                  BigInt      @id @default(autoincrement())
+  user_id             String
+  username            String      @db.String(100)
+  project_owner       UserProfile @relation(fields: [user_id, username], references: [user_id, username])
+  project_name        String      @db.String(255)
+  project_description String?     @db.String(2000)
+  project_url         String
 }
 
 model ApiKey {
-  id  BigInt  @id @default(autoincrement())
-  user_id String @unique
-  key String @unique
-  scope String?
-  isRevoked Boolean @default(false)
-  domain  String @default("mydomain.com")
+  id        BigInt   @id @default(autoincrement())
+  user_id   String   @unique
+  key       String   @unique
+  scope     String?
+  isRevoked Boolean  @default(false)
+  domain    String   @default("mydomain.com")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model MembershipRecord {
+  id   BigInt @id @default(autoincrement())
+  user_id String? @unique
+  stripe_customer_id String @unique
+  subscription_status PaymentStatus @default(INACTIVE)
+  subscription_id String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StripeCustomer {
+  id BigInt @id @default(autoincrement())
+  user_id String @unique
+  stripe_customer_id String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
 }
 
 enum MembershipTier {
